@@ -17,7 +17,7 @@ public class Board {
         rows = new ArrayList<>(9);
         columns = new ArrayList<>(9);
         grids = new ArrayList<>(9);
-        cells = new ArrayList<>(9);
+        cells = new ArrayList<>(81);
 
         for (int i = 0; i < 9; i++) {
             rows.add(new Row(i));
