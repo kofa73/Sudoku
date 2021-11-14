@@ -1,12 +1,13 @@
 package org.kovacstelekes.techblog.sudoku.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Collections.unmodifiableList;
 import static org.kovacstelekes.techblog.sudoku.model.CommonConstraints.checkPositionIsValid;
 
 public class Board {
+    public static Queue<Runnable> QUEUE = new LinkedList<>();
+
     private final List<Row> rows;
     private final List<Column> columns;
     private final List<Grid> grids;
@@ -65,5 +66,55 @@ public class Board {
 
     public List<Grid> grids() {
         return unmodifiableList(grids);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder text = new StringBuilder();
+        for (Row row : rows) {
+            if (row.id() % 3 == 0) {
+                text.append("+---+---+---\n");
+            }
+            for (int i = 0; i < 9; i++) {
+                if (i % 3 == 0) {
+                    text.append('|');
+                }
+                Cell cell = row.cellAt(i);
+                String value = cell.solution().map(String::valueOf).orElse(" ");
+                text.append(value);
+            }
+            text.append("\n");
+        }
+        return text.toString();
+    }
+
+    public void solve(String puzzle) {
+        int row = 0;
+        for (Iterator<String> it = puzzle.lines().iterator(); it.hasNext();) {
+            String line = it.next();
+            if (!line.startsWith("+")) {
+                String digits = line.replaceAll("[^0-9 ]", "");
+                if (digits.length() != 9) {
+                    throw new RuntimeException("Malformed line: " + line);
+                }
+                for (int column = 0; column < 9; column++) {
+                    char digitOrBlank = digits.charAt(column);
+                    if (digitOrBlank != ' ') {
+                        int rowNumber = row;
+                        int columnNumber = column;
+                        Board.QUEUE.add(() -> cellAt(rowNumber, columnNumber).solution(digitOrBlank - '0'));
+                    }
+                }
+                row++;
+            }
+        }
+
+        while (true) {
+            Runnable r = Board.QUEUE.poll();
+            if (r == null) {
+                break;
+            }
+            r.run();
+        }
     }
 }

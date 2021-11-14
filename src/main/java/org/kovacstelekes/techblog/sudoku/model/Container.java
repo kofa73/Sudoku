@@ -85,6 +85,11 @@ public abstract class Container {
      * @param value the value
      */
     void exclude(Cell cell, int value) {
-        potentialCellsByDigit.get(value).exclude(cell);
+        Optional<Cell> anotherSolvedCell = potentialCellsByDigit.get(value).exclude(cell);
+        anotherSolvedCell.ifPresent(newSolvedCell ->
+                Board.QUEUE.add(
+                        () -> newSolvedCell.solution(value)
+                )
+        );
     }
 }

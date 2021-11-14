@@ -73,9 +73,9 @@ public class Cell extends Solvable<Integer> {
     public void solution(Integer solution) {
         super.solution(solution);
         System.out.println("Solved " + this);
-        row.solvedCell(this);
-        column.solvedCell(this);
-        grid.solvedCell(this);
+        Board.QUEUE.add(() -> row.solvedCell(this));
+        Board.QUEUE.add(() -> column.solvedCell(this));
+        Board.QUEUE.add(() -> grid.solvedCell(this));
     }
 
     @Override
