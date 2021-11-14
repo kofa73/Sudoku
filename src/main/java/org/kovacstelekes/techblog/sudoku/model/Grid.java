@@ -8,6 +8,6 @@ public class Grid extends Container {
     @Override
     public void addCell(Cell cell) {
         safelyAddCell(cell);
-        cell.setGrid(this);
+        cell.grid(this);
     }
 }

@@ -8,6 +8,6 @@ public class Column extends Container {
     @Override
     public void addCell(Cell cell) {
         safelyAddCell(cell);
-        cell.setColumn(this);
+        cell.column(this);
     }
 }
