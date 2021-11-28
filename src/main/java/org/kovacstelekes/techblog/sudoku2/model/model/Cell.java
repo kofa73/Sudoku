@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.IntStream;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 

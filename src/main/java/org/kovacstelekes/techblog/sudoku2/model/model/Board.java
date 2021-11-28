@@ -1,6 +1,8 @@
 package org.kovacstelekes.techblog.sudoku2.model.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Board {
     private final List<Container> containers = new ArrayList<>();
@@ -53,7 +55,7 @@ public class Board {
                     text.append('|');
                 }
                 Cell cell = rows.get(rowN).cellAt(colN);
-                String value = cell.solution().map(String::valueOf).orElse(" ");
+                String value = cell.solution().map(String::valueOf).orElse(".");
                 text.append(value);
             }
             text.append("\n");
@@ -62,11 +64,43 @@ public class Board {
     }
 
     public void solve(String puzzle) {
+        parse(puzzle);
+
+        System.out.println("Parsed board:\n" + this);
+
+        String updatedBoard = updateBoardWhilePossible();
+
+        if (updatedBoard.contains(".")) {
+            System.out.println("failed :(");
+            containers.stream().filter(c -> !c.isSolved()).forEach(c -> System.out.println("Unsolved values in " + c + ": " + c.unsolvedValues()));
+            cells.stream().filter(c -> !c.isSolved()).forEach(c -> System.out.println("Unsolved values in " + c));
+        } else {
+            System.out.println("success :)");
+        }
+    }
+
+    private String updateBoardWhilePossible() {
+        String board = this.toString();
+        while (true) {
+            containers.stream().forEach(Container::removeSolvedValuesFromCells);
+            containers.stream().forEach(Container::solve);
+            String updatedBoard = toString();
+            if (updatedBoard.equals(board)) {
+                break;
+            } else {
+                board = updatedBoard;
+                System.out.println("Updated board:\n" + updatedBoard);
+            }
+        }
+        return board;
+    }
+
+    private void parse(String puzzle) {
         int row = 0;
         for (Iterator<String> it = puzzle.lines().iterator(); it.hasNext();) {
             String line = it.next();
             if (!line.startsWith("+")) {
-                String digits = line.replaceAll("[^0-9 ]", "");
+                String digits = line.replaceAll("[^0-9 \\.]", "");
                 if (digits.length() != 9) {
                     throw new RuntimeException("Malformed line: " + line);
                 }
@@ -80,29 +114,6 @@ public class Board {
                 }
                 row++;
             }
-        }
-
-        String board = toString();
-        System.out.println("Parsed board:\n" + board);
-
-        while (true) {
-            containers.stream().forEach(Container::removeSolvedValuesFromCells);
-            containers.stream().forEach(Container::solve);
-            String updatedBoard = toString();
-            if (updatedBoard.equals(board)) {
-                break;
-            } else {
-                board = updatedBoard;
-                System.out.println("Updated board:\n" + updatedBoard);
-            }
-        }
-
-        if (board.contains(" ")) {
-            System.out.println("failed :(");
-            containers.stream().filter(c -> !c.isSolved()).forEach(c -> System.out.println("Unsolved values in " + c + ": " + c.unsolvedValues()));
-            cells.stream().filter(c -> !c.isSolved()).forEach(c -> System.out.println("Unsolved values in " + c + ": " + c.values()));
-        } else {
-            System.out.println("success :)");
         }
     }
 }

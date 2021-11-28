@@ -1,22 +1,25 @@
 package org.kovacstelekes.techblog.sudoku2.model.model;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.IntStream;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.kovacstelekes.techblog.sudoku.model.CommonConstraints.checkPositionIsValid;
 
 /**
- * A subdivision of the puzzle, holding 9 cells. Position 0 is unused.
+ * A subdivision of the puzzle, holding 9 cells.
  */
 class Container {
     private final List<Cell> cells;
     private final String name;
-    private final Set<Integer> unsolvedValues = IntStream.range(1, 10).boxed().collect(toCollection(TreeSet::new));;
+    private final Set<Integer> unsolvedValues = IntStream.range(1, 10).boxed().collect(toCollection(TreeSet::new));
 
     protected Container(String name) {
         this.name = name;
