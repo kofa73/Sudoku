@@ -50,6 +50,10 @@ public class Cell {
 
     public boolean removeValue(Integer solutionOfAnotherCell) {
         boolean previouslyHadValue = values.remove(solutionOfAnotherCell);
+        // FIXME: if this is removed, detectImpossible goes crazy; with this present, valid cases fail
+        if (values.isEmpty()) {
+            throw new RuntimeException("No values remained in " + this);
+        }
         if (previouslyHadValue && isSolved()) {
             System.out.println("The only possible value for " + name + " is " + solution().get());
         }

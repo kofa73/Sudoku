@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.function.Predicate.not;
 
 public class Board {
     private final List<Container> containers = new ArrayList<>();
@@ -123,6 +124,6 @@ public class Board {
     }
 
     public Stream<Cell> unsolvedCells() {
-        return cells.stream().filter(cell -> !cell.isSolved());
+        return cells.stream().filter(not(Cell::isSolved));
     }
 }
