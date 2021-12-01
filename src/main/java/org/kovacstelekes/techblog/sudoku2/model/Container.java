@@ -1,13 +1,11 @@
 package org.kovacstelekes.techblog.sudoku2.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.*;
-import static java.util.Collections.unmodifiableList;
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
@@ -36,51 +34,50 @@ abstract class Container {
         return getClass().getSimpleName() + "#" + ordinal;
     }
 
-    public Cell cellAt(int position) {
-        CommonConstraints.checkPositionIsValid(position);
-        return cells.get(position);
-    }
-
-    public List<Cell> cells() {
-        return unmodifiableList(cells);
-    }
-
-    public void solve() {
+    public Stream<Boolean> solve() {
         unsolvedValues.clear();
         cells.stream()
+                .filter(not(Cell::isSolved))
                 .map(Cell::values)
-                .filter(values -> values.size() > 1)
                 .forEach(unsolvedValues::addAll);
 
-        unsolvedValues.stream().forEach(this::findCellForValue);
+        return unsolvedValues.stream().map(this::findCellForValue);
     }
 
-    public void removeSolvedValuesFromCells() {
-        cells.stream()
-                .filter(Cell::isSolved)
-                .forEach(this::removeCellValueFromOtherCells);
+    Stream<Boolean> removeSolvedValuesFromCells() {
+        return cells.stream()
+                .flatMap(this::removeSolvedCellValueFromOtherCells);
     }
 
-    private void removeCellValueFromOtherCells(Cell solvedCell) {
-        solvedCell.solution().ifPresent(solution ->
-        cells.stream()
-                .filter(otherCell -> otherCell != solvedCell)
-                .forEach(otherCell -> otherCell.removeValue(solution))
-        );
+    private Stream<Boolean> removeSolvedCellValueFromOtherCells(Cell solvedCell) {
+        return solvedCell.solution().map(value ->
+                cells.stream()
+                    .filter(otherCell -> otherCell != solvedCell)
+                    .map(otherCell -> otherCell.removeValue(value))
+        ).orElse(Stream.empty());
     }
 
-    private void findCellForValue(Integer value) {
+    private boolean findCellForValue(Integer value) {
         List<Cell> cellsThatCanHoldValue = cells.stream()
                 .filter(cell -> cell.values().contains(value))
+                .limit(2) // we want to know only if there is no suitable cell, there's a single cell or there are more
                 .collect(toList());
+
+        boolean solved;
         if (cellsThatCanHoldValue.isEmpty()) {
-            throw new IllegalStateException("No cell can hold value=" + value + ". Cells: " + cells);
+            System.out.println("No cell can hold value=" + value + ". Cells: " + cells);
+            solved = false;
+        } else {
+            solved = cellsThatCanHoldValue.size() == 1;
         }
-        if (cellsThatCanHoldValue.size() == 1) {
+
+        if (solved) {
             Cell onlyPossibleCell = cellsThatCanHoldValue.get(0);
             System.out.println("In " + this + ", only " + onlyPossibleCell + " can hold value " + value);
             onlyPossibleCell.solution(value);
         }
+
+        return solved;
     }
 
     public boolean isSolved() {

@@ -3,8 +3,8 @@ package org.kovacstelekes.techblog.sudoku2.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -47,59 +47,31 @@ public class Board {
         }
     }
 
-    public Cell cellAt(int row, int column) {
-        return rows.get(row).cellAt(column);
+    public boolean deduceValues() {
+        applyRules();
+
+        return isSolved();
     }
 
-    public boolean solve() {
-        boolean solved = updateBoardWhilePossible();
-
-        if (solved) {
-            System.out.println("success :)");
-            System.out.println(this);
-        } else {
-            System.out.println("failed :(");
-            Cell nextCellToCheck = cells.stream()
-                    .filter(cell -> !cell.isSolved())
-                    .reduce((Cell c1, Cell c2) -> c1.numberOfOptions() < c2.numberOfOptions() ? c1 : c2)
-                    .orElseThrow(() -> new RuntimeException("No unsolved cells"));
-
-            containers.stream().filter(c -> !c.isSolved()).forEach(c -> System.out.println("Unsolved values in " + c + ": " + c.unsolvedValues()));
-            cells.stream().filter(c -> !c.isSolved()).forEach(c -> System.out.println("Unsolved values in " + c));
-
-            System.out.println("Next cell should be " + nextCellToCheck);
-
-            for (int possibleValue : nextCellToCheck.values()) {
-                System.out.println("Guessing " + possibleValue + " for " + nextCellToCheck);
-                int[] boardValues = this.toState();
-                boardValues[nextCellToCheck.ordinal()] = possibleValue;
-                Board boardWithGuess = Board.fromState(boardValues);
-                try {
-                    solved = boardWithGuess.solve();
-                } catch (IllegalStateException e) {
-                    solved = false;
-                }
-                if (solved) {
-                    break;
-                }
-            }
-        }
-        return solved;
+    private void applyRules() {
+        boolean progressed;
+        do {
+            progressed = eliminateCellValues() || applyingContainerRulesProducesNewDiscovery();
+        } while (progressed);
     }
 
-    private boolean updateBoardWhilePossible() {
-        int[] currentState = toState();
-        while (true) {
-            containers.stream().forEach(Container::removeSolvedValuesFromCells);
-            containers.stream().forEach(Container::solve);
-            int[] updatedState = toState();
-            if (Arrays.equals(currentState, updatedState)) {
-                break;
-            } else {
-                currentState = updatedState;
-                System.out.println("Updated board\n");
-            }
-        }
+    private boolean applyingContainerRulesProducesNewDiscovery() {
+        return containers.stream().flatMap(Container::solve).reduce(Boolean::logicalOr).orElse(false);
+    }
+
+    private boolean eliminateCellValues() {
+        return containers.stream()
+                .flatMap(Container::removeSolvedValuesFromCells)
+                .reduce(Boolean::logicalOr)
+                .orElse(false);
+    }
+
+    private boolean isSolved() {
         return cells.stream().allMatch(Cell::isSolved);
     }
 
@@ -150,5 +122,9 @@ public class Board {
             text.append("\n");
         }
         return text.toString();
+    }
+
+    public Stream<Cell> unsolvedCells() {
+        return cells.stream().filter(cell -> !cell.isSolved());
     }
 }

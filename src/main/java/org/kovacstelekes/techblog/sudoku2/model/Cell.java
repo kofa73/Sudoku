@@ -22,7 +22,7 @@ public class Cell {
         this.ordinal = ordinal;
     }
 
-    Set<Integer> values() {
+    public Set<Integer> values() {
         return ImmutableSet.copyOf(values);
     }
 
@@ -48,11 +48,12 @@ public class Cell {
         return isSolved() ? Optional.of(values.iterator().next()) : empty();
     }
 
-    public void removeValue(Integer solutionOfAnotherCell) {
+    public boolean removeValue(Integer solutionOfAnotherCell) {
         boolean previouslyHadValue = values.remove(solutionOfAnotherCell);
         if (previouslyHadValue && isSolved()) {
             System.out.println("The only possible value for " + name + " is " + solution().get());
         }
+        return previouslyHadValue;
     }
 
     @Override
@@ -64,7 +65,6 @@ public class Cell {
     }
 
     public void setKnownValue(int value) {
-        System.out.println("Initialised known value " + name + ": " + value);
         setValue(value);
     }
 
