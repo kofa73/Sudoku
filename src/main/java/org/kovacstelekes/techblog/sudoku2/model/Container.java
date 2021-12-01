@@ -1,4 +1,4 @@
-package org.kovacstelekes.techblog.sudoku2.model.model;
+package org.kovacstelekes.techblog.sudoku2.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,23 +6,22 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.IntStream;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import static org.kovacstelekes.techblog.sudoku.model.CommonConstraints.checkPositionIsValid;
 
 /**
  * A subdivision of the puzzle, holding 9 cells.
  */
-class Container {
+abstract class Container {
     private final List<Cell> cells;
-    private final String name;
+    private final int ordinal;
     private final Set<Integer> unsolvedValues = IntStream.range(1, 10).boxed().collect(toCollection(TreeSet::new));
 
-    protected Container(String name) {
-        this.name = name;
+    protected Container(int ordinal) {
+        checkArgument(ordinal >= 0 && ordinal < 9, "Invalid ordinal: " + ordinal);
+        this.ordinal = ordinal;
         cells = new ArrayList<>(9);
     }
 
@@ -34,11 +33,11 @@ class Container {
 
     @Override
     public String toString() {
-        return name;
+        return getClass().getSimpleName() + "#" + ordinal;
     }
 
     public Cell cellAt(int position) {
-        checkPositionIsValid(position);
+        CommonConstraints.checkPositionIsValid(position);
         return cells.get(position);
     }
 
@@ -79,7 +78,7 @@ class Container {
         }
         if (cellsThatCanHoldValue.size() == 1) {
             Cell onlyPossibleCell = cellsThatCanHoldValue.get(0);
-            System.out.println("In " + name + ", only " + onlyPossibleCell + " can hold value " + value);
+            System.out.println("In " + this + ", only " + onlyPossibleCell + " can hold value " + value);
             onlyPossibleCell.solution(value);
         }
     }
@@ -90,5 +89,9 @@ class Container {
 
     public Set<Integer> unsolvedValues() {
         return unsolvedValues;
+    }
+
+    public int ordinal() {
+        return ordinal;
     }
 }

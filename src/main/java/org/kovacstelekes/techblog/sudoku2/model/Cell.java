@@ -1,4 +1,4 @@
-package org.kovacstelekes.techblog.sudoku2.model.model;
+package org.kovacstelekes.techblog.sudoku2.model;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -14,10 +14,12 @@ import static java.util.stream.Collectors.toList;
 public class Cell {
     private static final Collection<Integer> ALL_VALUES = IntStream.range(1, 10).boxed().collect(toList());
     private final String name;
+    private final int ordinal;
     private final Set<Integer> values = new TreeSet<>(ALL_VALUES);
 
-    public Cell(String name) {
+    public Cell(String name, int ordinal) {
         this.name = name;
+        this.ordinal = ordinal;
     }
 
     Set<Integer> values() {
@@ -32,6 +34,10 @@ public class Cell {
     private void setValue(Integer value) {
         values.clear();
         values.add(value);
+    }
+
+    public int numberOfOptions() {
+        return values.size();
     }
 
     public boolean isSolved() {
@@ -60,5 +66,9 @@ public class Cell {
     public void setKnownValue(int value) {
         System.out.println("Initialised known value " + name + ": " + value);
         setValue(value);
+    }
+
+    public int ordinal() {
+        return ordinal;
     }
 }

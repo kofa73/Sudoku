@@ -1,4 +1,4 @@
-package org.kovacstelekes.techblog.sudoku2.model.model;
+package org.kovacstelekes.techblog.sudoku2.model;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
 
