@@ -1,6 +1,9 @@
 package org.kovacstelekes.techblog.sudoku2.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -52,8 +55,8 @@ abstract class Container {
     private Stream<Boolean> removeSolvedCellValueFromOtherCells(Cell solvedCell) {
         return solvedCell.solution().map(value ->
                 cells.stream()
-                    .filter(otherCell -> otherCell != solvedCell)
-                    .map(otherCell -> otherCell.removeValue(value))
+                        .filter(otherCell -> otherCell != solvedCell)
+                        .map(otherCell -> otherCell.removeValue(value))
         ).orElse(Stream.empty());
     }
 

@@ -1,7 +1,6 @@
 package org.kovacstelekes.techblog.sudoku2;
 
 import org.junit.jupiter.api.Test;
-import org.kovacstelekes.techblog.sudoku2.BoardParser;
 import org.kovacstelekes.techblog.sudoku2.model.Board;
 
 import java.util.Optional;
