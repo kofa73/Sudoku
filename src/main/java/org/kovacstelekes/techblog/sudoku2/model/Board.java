@@ -2,10 +2,11 @@ package org.kovacstelekes.techblog.sudoku2.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.function.Predicate.not;
 
 public class Board {
     private final List<Container> containers = new ArrayList<>();
@@ -46,32 +47,45 @@ public class Board {
         }
     }
 
-    public boolean deduceValues() {
-        applyRules();
-
-        return isSolved();
+    public IterationOutcome deduceValues() {
+        IterationOutcome rulesOutcome = applyRules();
+        return rulesOutcome.or(() -> new IterationOutcome(rulesOutcome.progressed(), outcome()));
     }
 
-    private void applyRules() {
-        boolean progressed;
+    private IterationOutcome applyRules() {
+        IterationOutcome iterationOutcome;
+
         do {
-            progressed = eliminateCellValues() || applyingContainerRulesProducesNewDiscovery();
-        } while (progressed);
+            iterationOutcome = eliminateCellValues().or(this::applyingContainerRulesProducesNewDiscovery);
+        } while (iterationOutcome.needsAnotherIteration());
+
+        return iterationOutcome;
     }
 
-    private boolean applyingContainerRulesProducesNewDiscovery() {
-        return containers.stream().flatMap(Container::solve).reduce(Boolean::logicalOr).orElse(false);
+    private IterationOutcome applyingContainerRulesProducesNewDiscovery() {
+        return containers.stream()
+                .flatMap(Container::solve)
+                .reduce(IterationOutcome::reduce).orElseGet(() -> new IterationOutcome(false, outcome()));
     }
 
-    private boolean eliminateCellValues() {
+    private IterationOutcome eliminateCellValues() {
         return containers.stream()
                 .flatMap(Container::removeSolvedValuesFromCells)
-                .reduce(Boolean::logicalOr)
-                .orElse(false);
+                .takeWhile(iterationOutcome -> iterationOutcome.outcome() != Outcome.INVALID)
+                .reduce(IterationOutcome::reduce)
+                .orElse(new IterationOutcome(false, outcome()));
     }
 
-    private boolean isSolved() {
-        return cells.stream().allMatch(Cell::isSolved);
+    private Outcome outcome() {
+        Outcome outcome;
+        if (cells.stream().anyMatch(cell -> cell.outcome() == Outcome.INVALID)) {
+            outcome = Outcome.INVALID;
+        } else if (cells.stream().allMatch(cell -> cell.outcome() == Outcome.UNIQUE_SOLUTION)) {
+            outcome = Outcome.UNIQUE_SOLUTION;
+        } else {
+            outcome = Outcome.SEVERAL_POSSIBILITIES;
+        }
+        return outcome;
     }
 
     public int[] toState() {
@@ -124,6 +138,6 @@ public class Board {
     }
 
     public Stream<Cell> unsolvedCells() {
-        return cells.stream().filter(not(Cell::isSolved));
+        return cells.stream().filter(cell -> cell.outcome() == Outcome.SEVERAL_POSSIBILITIES);
     }
 }

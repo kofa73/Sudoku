@@ -37,22 +37,22 @@ abstract class Container {
         return getClass().getSimpleName() + "#" + ordinal;
     }
 
-    public Stream<Boolean> solve() {
+    public Stream<IterationOutcome> solve() {
         unsolvedValues.clear();
         cells.stream()
-                .filter(not(Cell::isSolved))
+                .filter(cell -> cell.outcome() == Outcome.SEVERAL_POSSIBILITIES)
                 .map(Cell::values)
                 .forEach(unsolvedValues::addAll);
 
         return unsolvedValues.stream().map(this::findCellForValue);
     }
 
-    Stream<Boolean> removeSolvedValuesFromCells() {
+    Stream<IterationOutcome> removeSolvedValuesFromCells() {
         return cells.stream()
                 .flatMap(this::removeSolvedCellValueFromOtherCells);
     }
 
-    private Stream<Boolean> removeSolvedCellValueFromOtherCells(Cell solvedCell) {
+    private Stream<IterationOutcome> removeSolvedCellValueFromOtherCells(Cell solvedCell) {
         return solvedCell.solution().map(value ->
                 cells.stream()
                         .filter(otherCell -> otherCell != solvedCell)
@@ -60,27 +60,29 @@ abstract class Container {
         ).orElse(Stream.empty());
     }
 
-    private boolean findCellForValue(Integer value) {
+    private IterationOutcome findCellForValue(Integer value) {
         List<Cell> cellsThatCanHoldValue = cells.stream()
                 .filter(cell -> cell.values().contains(value))
                 .limit(2) // we want to know only if there is no suitable cell, there's a single cell or there are more
                 .collect(toList());
 
-        boolean solved;
+        Outcome outcome;
+        boolean progressed = false;
         if (cellsThatCanHoldValue.isEmpty()) {
-            System.out.println("No cell can hold value=" + value + ". Cells: " + cells);
-            solved = false;
+//            System.out.println("No cell can hold value=" + value + ". Cells: " + cells);
+            outcome = Outcome.INVALID;
         } else {
-            solved = cellsThatCanHoldValue.size() == 1;
+            outcome = cellsThatCanHoldValue.size() == 1 ? Outcome.UNIQUE_SOLUTION : Outcome.SEVERAL_POSSIBILITIES;
         }
 
-        if (solved) {
+        if (outcome == Outcome.UNIQUE_SOLUTION) {
             Cell onlyPossibleCell = cellsThatCanHoldValue.get(0);
-            System.out.println("In " + this + ", only " + onlyPossibleCell + " can hold value " + value);
+//            System.out.println("In " + this + ", only " + onlyPossibleCell + " can hold value " + value);
             onlyPossibleCell.solution(value);
+            progressed = true;
         }
 
-        return solved;
+        return new IterationOutcome(progressed, outcome);
     }
 
     public boolean isSolved() {

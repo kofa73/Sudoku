@@ -2,6 +2,8 @@ package org.kovacstelekes.techblog.sudoku2;
 
 import org.kovacstelekes.techblog.sudoku2.model.Board;
 import org.kovacstelekes.techblog.sudoku2.model.Cell;
+import org.kovacstelekes.techblog.sudoku2.model.IterationOutcome;
+import org.kovacstelekes.techblog.sudoku2.model.Outcome;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -10,8 +12,16 @@ import static java.util.Optional.empty;
 
 public class Solver {
     public Optional<Board> solve(Board board) {
-        boolean deductionSuccessful = board.deduceValues();
-        return deductionSuccessful ? Optional.of(board) : applyGuessing(board);
+        Outcome outcome = board.deduceValues().outcome();
+        Optional<Board> solution;
+        if (outcome == Outcome.INVALID) {
+            solution = empty();
+        } else if (outcome == Outcome.UNIQUE_SOLUTION) {
+            solution = Optional.of(board);
+        } else {
+            solution = applyGuessing(board);
+        }
+        return solution;
     }
 
     private Optional<Board> applyGuessing(Board board) {
@@ -19,9 +29,7 @@ public class Solver {
                 .reduce((Cell c1, Cell c2) -> c1.numberOfOptions() < c2.numberOfOptions() ? c1 : c2)
                 .orElseThrow(() -> new RuntimeException("No unsolved cells"));
 
-        System.out.println("Next cell should be " + nextCellToCheck);
-
-        Optional<Board> solution = empty();
+//        System.out.println("Next cell should be " + nextCellToCheck);
 
         return nextCellToCheck.values().stream()
                 .flatMap(possibleValue -> tryWithGuess(board, nextCellToCheck.ordinal(), possibleValue))

@@ -26,38 +26,57 @@ public class Cell {
         return ImmutableSet.copyOf(values);
     }
 
-    public void solution(Integer value) {
-        System.out.println("Found solution for " + name + ": " + value);
-        setValue(value);
+    public IterationOutcome solution(Integer value) {
+//        System.out.println("Found solution for " + name + ": " + value);
+        return setValue(value);
     }
 
-    private void setValue(Integer value) {
-        values.clear();
-        values.add(value);
+    private IterationOutcome setValue(Integer value) {
+        Outcome outcome;
+        boolean progressed = false;
+
+        if (values.size() == 0 || (values.size() == 1 && !values.iterator().next().equals(value))) {
+//            System.out.println(this + " cannot store value " + value);
+            outcome = Outcome.INVALID;
+        } else {
+            outcome = Outcome.UNIQUE_SOLUTION;
+            if (values.size() != 1) {
+                values.clear();
+                values.add(value);
+                progressed = true;
+            }
+        }
+        return new IterationOutcome(progressed, outcome);
     }
 
     public int numberOfOptions() {
         return values.size();
     }
 
-    public boolean isSolved() {
-        return values.size() == 1;
+    public Outcome outcome() {
+        return switch (values.size()) {
+            case 1 -> Outcome.UNIQUE_SOLUTION;
+            case 0 -> Outcome.INVALID;
+            default -> Outcome.SEVERAL_POSSIBILITIES;
+        };
+
     }
 
     public Optional<Integer> solution() {
-        return isSolved() ? Optional.of(values.iterator().next()) : empty();
+        return outcome() == Outcome.UNIQUE_SOLUTION ? Optional.of(values.iterator().next()) : empty();
     }
 
-    public boolean removeValue(Integer solutionOfAnotherCell) {
+    public IterationOutcome removeValue(Integer solutionOfAnotherCell) {
         boolean previouslyHadValue = values.remove(solutionOfAnotherCell);
         // FIXME: if this is removed, detectImpossible goes crazy; with this present, valid cases fail
         if (values.isEmpty()) {
-            throw new RuntimeException("No values remained in " + this);
+            // throw new IllegalStateException();
+            return new IterationOutcome(false, Outcome.INVALID);
         }
-        if (previouslyHadValue && isSolved()) {
-            System.out.println("The only possible value for " + name + " is " + solution().get());
+        if (previouslyHadValue && outcome() == Outcome.UNIQUE_SOLUTION) {
+//            System.out.println("The only possible value for " + name + " is " + solution().get());
         }
-        return previouslyHadValue;
+        return new IterationOutcome(previouslyHadValue, outcome());
     }
 
     @Override
@@ -69,7 +88,9 @@ public class Cell {
     }
 
     public void setKnownValue(int value) {
-        setValue(value);
+        if (setValue(value).outcome() == Outcome.INVALID) {
+            throw new IllegalStateException(this + " cannot take value " + value);
+        }
     }
 
     public int ordinal() {
