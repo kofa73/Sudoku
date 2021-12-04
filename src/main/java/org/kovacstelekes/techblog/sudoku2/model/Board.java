@@ -1,12 +1,15 @@
 package org.kovacstelekes.techblog.sudoku2.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.function.Predicate.not;
 
 public class Board {
     private final List<Container> containers = new ArrayList<>();
@@ -56,7 +59,8 @@ public class Board {
         IterationOutcome iterationOutcome;
 
         do {
-            iterationOutcome = eliminateCellValues().or(this::applyingContainerRulesProducesNewDiscovery);
+            IterationOutcome outcome = eliminateCellValues();
+            iterationOutcome = outcome.or(this::applyingContainerRulesProducesNewDiscovery);
         } while (iterationOutcome.needsAnotherIteration());
 
         return iterationOutcome;
@@ -69,11 +73,14 @@ public class Board {
     }
 
     private IterationOutcome eliminateCellValues() {
-        return containers.stream()
+        IterationOutcome outcome = containers.stream()
                 .flatMap(Container::removeSolvedValuesFromCells)
+                // FIXME: the takeWhile will cause the last 'INVALID' value to be skipped;
+                // therefore, the returned outcome will never indicate a contradiction
                 .takeWhile(iterationOutcome -> iterationOutcome.outcome() != Outcome.INVALID)
                 .reduce(IterationOutcome::reduce)
                 .orElse(new IterationOutcome(false, outcome()));
+        return outcome;
     }
 
     private Outcome outcome() {
