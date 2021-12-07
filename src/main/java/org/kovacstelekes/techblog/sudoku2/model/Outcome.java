@@ -1,7 +1,5 @@
 package org.kovacstelekes.techblog.sudoku2.model;
 
-import org.assertj.core.util.Preconditions;
-
 import static org.assertj.core.util.Preconditions.checkNotNull;
 
 public enum Outcome {

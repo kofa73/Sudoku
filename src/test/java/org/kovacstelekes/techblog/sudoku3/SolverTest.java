@@ -1,10 +1,19 @@
 package org.kovacstelekes.techblog.sudoku3;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kovacstelekes.techblog.sudoku3.model.Board;
+import org.kovacstelekes.techblog.sudoku3.model.Solver;
+
+import java.util.Optional;
 
 class SolverTest {
     private final org.kovacstelekes.techblog.sudoku3.BoardParser parser = new BoardParser();
+
+    @BeforeEach
+    void reset() {
+        Board.nBoards = 0;
+    }
 
     @Test
     void solveSimple() {
@@ -27,6 +36,14 @@ class SolverTest {
 
     private void solveAndPrint(Board board) {
         System.out.println(board);
+        Solver solver = new Solver();
+        try {
+            Optional<Board> solved = solver.solve(board);
+            System.out.println(solved.map(Board::toString).orElse("no solution"));
+        } finally {
+            System.out.println("nChecks: " + solver.nChecks());
+            System.out.println("nBoards: " + Board.nBoards);
+        }
     }
 
     @Test
@@ -119,6 +136,35 @@ class SolverTest {
                     |   |1  | 9 |
                     |  7| 69|  5|
                     |6  |2  |   |
+                """);
+
+        solveAndPrint(board);
+    }
+
+    /*
+8 . . . . . . . .
+. . 3 6 . . . . .
+. 7 . . 9 . 2 . .
+. 5 . . . 7 . . .
+. . . . 4 5 7 . .
+. . . 1 . . . 3 .
+. . 1 . . . . 6 8
+. . 8 5 . . . 1 .
+. 9 . . . . 4 . .
+     */
+
+    @Test
+    void worldsHardestSudoku() {
+        Board board = parser.parse("""
+8........
+..36.....
+.7..9.2..
+.5...7...
+....457..
+...1...3.
+..1....68
+..85...1.
+.9....4..
                 """);
 
         solveAndPrint(board);

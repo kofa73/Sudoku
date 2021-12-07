@@ -15,7 +15,8 @@ public class BoardParser {
                 String digits = digitsOf(line);
                 for (int column = 0; column < 9; column++) {
                     char digitOrBlank = digits.charAt(column);
-                    cellValues[index] = digitOrBlank - '0';
+                    // internally, the digits are used as indices, so are mapped to 0..8
+                    cellValues[index] = digitOrBlank - '1';
                     index++;
                 }
             }
@@ -30,7 +31,7 @@ public class BoardParser {
     }
 
     private String digitsOf(String line) {
-        String digits = line.replaceAll("[^0-9 \\.]", "").replaceAll("[ \\.]", "0");
+        String digits = line.replaceAll("[^0-9 .]", "").replaceAll("[ .]", "0");
         if (digits.length() != 9) {
             throw new RuntimeException("Malformed line: " + line);
         }

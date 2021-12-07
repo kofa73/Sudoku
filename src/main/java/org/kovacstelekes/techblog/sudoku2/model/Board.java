@@ -1,22 +1,20 @@
 package org.kovacstelekes.techblog.sudoku2.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.function.Predicate.not;
 
 public class Board {
     private final List<Container> containers = new ArrayList<>();
     private final List<Cell> cells = new ArrayList<>();
     private final List<Row> rows = new ArrayList<>();
 
+    public static long nBoards = 0;
+
     private Board() {
+        nBoards++;
         List<Column> columns = new ArrayList<>();
         List<Grid> grids = new ArrayList<>();
 

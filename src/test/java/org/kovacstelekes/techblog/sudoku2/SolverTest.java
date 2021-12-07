@@ -1,5 +1,6 @@
 package org.kovacstelekes.techblog.sudoku2;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kovacstelekes.techblog.sudoku2.model.Board;
 
@@ -8,6 +9,11 @@ import java.util.Optional;
 class SolverTest {
     private final BoardParser parser = new BoardParser();
     private final Solver solver = new Solver();
+
+    @BeforeEach
+    void reset() {
+        Board.nBoards = 0;
+    }
 
     @Test
     void solveSimple() {
@@ -32,6 +38,7 @@ class SolverTest {
         Optional<Board> solution = solver.solve(board);
         solution.ifPresent(System.out::println);
         System.out.println("solved = " + solution.isPresent());
+        System.out.println("nBoards = " + Board.nBoards);
     }
 
     @Test
@@ -124,6 +131,22 @@ class SolverTest {
                     |   |1  | 9 |
                     |  7| 69|  5|
                     |6  |2  |   |
+                """);
+
+        solveAndPrint(board);
+    }
+    @Test
+    void worldsHardestSudoku() {
+        Board board = parser.parse("""
+8........
+..36.....
+.7..9.2..
+.5...7...
+....457..
+...1...3.
+..1....68
+..85...1.
+.9....4..
                 """);
 
         solveAndPrint(board);
