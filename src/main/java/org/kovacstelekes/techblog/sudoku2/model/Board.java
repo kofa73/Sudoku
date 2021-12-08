@@ -2,6 +2,7 @@ package org.kovacstelekes.techblog.sudoku2.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -50,7 +51,8 @@ public class Board {
 
     public IterationOutcome deduceValues() {
         IterationOutcome rulesOutcome = applyRules();
-        return rulesOutcome.or(() -> new IterationOutcome(rulesOutcome.progressed(), outcome()));
+        return rulesOutcome;
+        //return rulesOutcome.or(() -> new IterationOutcome(rulesOutcome.progressed(), outcome()));
     }
 
     private IterationOutcome applyRules() {
@@ -71,14 +73,16 @@ public class Board {
     }
 
     private IterationOutcome eliminateCellValues() {
+        AtomicReference<IterationOutcome> peekedOutcome = new AtomicReference<>();
         IterationOutcome outcome = containers.stream()
                 .flatMap(Container::removeSolvedValuesFromCells)
                 // FIXME: the takeWhile will cause the last 'INVALID' value to be skipped;
                 // therefore, the returned outcome will never indicate a contradiction
+                .peek(peeked -> peekedOutcome.set(peeked))
                 .takeWhile(iterationOutcome -> iterationOutcome.outcome() != Outcome.INVALID)
                 .reduce(IterationOutcome::reduce)
                 .orElse(new IterationOutcome(false, outcome()));
-        return outcome;
+        return IterationOutcome.reduce(peekedOutcome.get(), outcome);
     }
 
     private Outcome outcome() {

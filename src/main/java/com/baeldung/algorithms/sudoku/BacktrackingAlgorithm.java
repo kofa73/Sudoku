@@ -1,103 +1,30 @@
 package com.baeldung.algorithms.sudoku;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class BacktrackingAlgorithm {
 
-    private static final int BOARD_SIZE = 9;
+    static final int BOARD_SIZE = 9;
     private static final int SUBSECTION_SIZE = 3;
-    private static final int BOARD_START_INDEX = 0;
+    static final int BOARD_START_INDEX = 0;
 
     private static final int NO_VALUE = 0;
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 9;
 
-    /*
-{9,0,0,0,0,0,0,4,0},
-{0,7,0,6,0,0,3,0,9},
-{0,0,0,0,3,0,0,5,0},
-{0,5,0,0,0,1,0,0,0},
-{0,0,0,0,0,0,0,0,4},
-{1,0,0,0,2,0,9,0,6},
-{5,0,0,0,6,0,2,0,1},
-{0,0,0,0,0,0,0,3,0},
-{0,0,8,7,0,0,0,0,0}
-     */
-    
-//    private static int[][] board = {
-//      {8, 0, 0, 0, 0, 0, 0, 0, 0},
-//      {0, 0, 3, 6, 0, 0, 0, 0, 0},
-//      {0, 7, 0, 0, 9, 0, 2, 0, 0},
-//      {0, 5, 0, 0, 0, 7, 0, 0, 0},
-//      {0, 0, 0, 0, 4, 5, 7, 0, 0},
-//      {0, 0, 0, 1, 0, 0, 0, 3, 0},
-//      {0, 0, 1, 0, 0, 0, 0, 6, 8},
-//      {0, 0, 8, 5, 0, 0, 0, 1, 0},
-//      {0, 9, 0, 0, 0, 0, 4, 0, 0}
-//    };
-    // evil
-//    private static int[][] board = {
-//        {9,0,0,0,0,0,0,4,0},
-//        {0,7,0,6,0,0,3,0,9},
-//        {0,0,0,0,3,0,0,5,0},
-//        {0,5,0,0,0,1,0,0,0},
-//        {0,0,0,0,0,0,0,0,4},
-//        {1,0,0,0,2,0,9,0,6},
-//        {5,0,0,0,6,0,2,0,1},
-//        {0,0,0,0,0,0,0,3,0},
-//        {0,0,8,7,0,0,0,0,0}
-//    };
-    // impossible - no solution
-//    private static int[][] board = {
-//        {9,0,0,0,0,0,0,4,0},
-//        {0,7,0,6,0,0,3,0,9},
-//        {0,0,0,0,3,0,0,8,0},
-//        {0,0,0,9,0,0,0,0,0},
-//        {0,4,0,0,0,0,0,0,7},
-//        {1,0,0,0,0,0,0,0,0},
-//        {0,0,0,1,0,0,0,9,0},
-//        {0,0,7,0,6,9,0,0,5},
-//        {6,0,0,2,0,0,0,0,0}
-//    };
-    // "World's hardest"
-private static int[][] board = {
-        {8, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 3, 6, 0, 0, 0, 0, 0},
-        {0, 7, 0, 0, 9, 0, 2, 0, 0},
-        {0, 5, 0, 0, 0, 7, 0, 0, 0},
-        {0, 0, 0, 0, 4, 5, 7, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0, 3, 0},
-        {0, 0, 1, 0, 0, 0, 0, 6, 8},
-        {0, 0, 8, 5, 0, 0, 0, 1, 0},
-        {0, 9, 0, 0, 0, 0, 4, 0, 0}
-};
-
-    static long nChecks = 0;
-
-    public static void main(String[] args) {
-        BacktrackingAlgorithm solver = new BacktrackingAlgorithm();
-        solver.solve(board);
-        solver.printBoard();
-        System.out.println("Checked " + nChecks);
+    public boolean solve(int[][] board) {
+        return solve(board, 1);
     }
 
-    private void printBoard() {
-        for (int row = BOARD_START_INDEX; row < BOARD_SIZE; row++) {
-            for (int column = BOARD_START_INDEX; column < BOARD_SIZE; column++) {
-                System.out.print(board[row][column] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    private boolean solve(int[][] board) {
-        nChecks++;
+    private boolean solve(int[][] board, int depth) {
+//        System.out.println(String.format("%4d %s", depth, flatBoardDump(board)));
         for (int row = BOARD_START_INDEX; row < BOARD_SIZE; row++) {
             for (int column = BOARD_START_INDEX; column < BOARD_SIZE; column++) {
                 if (board[row][column] == NO_VALUE) {
                     for (int k = MIN_VALUE; k <= MAX_VALUE; k++) {
                         board[row][column] = k;
-                        if (isValid(board, row, column) && solve(board)) {
+                        if (isValid(board, row, column) && solve(board, depth + 1)) {
                             return true;
                         }
                         board[row][column] = NO_VALUE;
@@ -152,5 +79,9 @@ private static int[][] board = {
             }
         }
         return true;
+    }
+
+    private String flatBoardDump(int[][] board) {
+        return Arrays.stream(board).flatMapToInt(Arrays::stream).map(i -> i - 1).collect(StringBuffer::new, StringBuffer::append, StringBuffer::append).toString().replace("-1", ".");
     }
 }

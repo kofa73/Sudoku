@@ -1,0 +1,8 @@
+backtrack
+simple      elapsed: 10000 ms; cnt=73914, perf=0.135292
+medium      elapsed: 10001 ms; cnt=1555, perf=6.431511
+hard        elapsed: 10180 ms; cnt=34, perf=299.411765
+whardest    elapsed: 10040 ms; cnt=187, perf=53.689840
+evil        elapsed: 10439 ms; cnt=21, perf=497.095238
+empty       elapsed: 10000 ms; cnt=26615, perf=0.375728
+impossible  elapsed: 10021 ms; cnt=334, perf=30.002994

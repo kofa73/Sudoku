@@ -56,9 +56,9 @@ public class Options<V> {
             updated = (solution == null);
             if (updated) {
                 solution = value;
-                if (!Board.disableDiags) {
-                    System.out.println("Solved " + this);
-                }
+//                if (!Board.disableDiags) {
+//                    System.out.println("Solved " + this);
+//                }
                 possibleValues = Set.of(value);
                 relatedOptions.forEach(related -> related.excludeValue(value));
             }

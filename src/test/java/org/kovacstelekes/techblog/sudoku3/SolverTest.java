@@ -8,7 +8,7 @@ import org.kovacstelekes.techblog.sudoku3.model.Solver;
 import java.util.Optional;
 
 class SolverTest {
-    private final org.kovacstelekes.techblog.sudoku3.BoardParser parser = new BoardParser();
+    private final BoardParser parser = new BoardParser();
 
     @BeforeEach
     void reset() {
