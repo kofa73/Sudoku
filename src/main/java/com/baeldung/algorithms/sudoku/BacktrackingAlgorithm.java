@@ -13,11 +13,18 @@ public class BacktrackingAlgorithm {
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 9;
 
+    private int nChecks = 0;
+
+    public int nChecks() {
+        return nChecks;
+    }
+
     public boolean solve(int[][] board) {
         return solve(board, 1);
     }
 
     private boolean solve(int[][] board, int depth) {
+        nChecks++;
 //        System.out.println(String.format("%4d %s", depth, flatBoardDump(board)));
         for (int row = BOARD_START_INDEX; row < BOARD_SIZE; row++) {
             for (int column = BOARD_START_INDEX; column < BOARD_SIZE; column++) {

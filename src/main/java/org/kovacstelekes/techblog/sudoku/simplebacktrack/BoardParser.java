@@ -3,7 +3,7 @@ package org.kovacstelekes.techblog.sudoku.simplebacktrack;
 import java.util.Iterator;
 
 public class BoardParser {
-    public BackTrackSolver parse(String puzzle) {
+    public int[] parse(String puzzle) {
         int[] cellValues = new int[9 * 9];
         int index = 0;
 
@@ -18,9 +18,7 @@ public class BoardParser {
                 }
             }
         }
-        BackTrackSolver board = BackTrackSolver.fromState(cellValues);
-        System.out.println("Parsed board:\n" + board);
-        return board;
+        return cellValues;
     }
 
     private boolean gridSeparator(String line) {
