@@ -1,24 +1,20 @@
-package org.kovacstelekes.techblog.sudoku3;
+package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kovacstelekes.techblog.sudoku.BoardParser;
-import org.kovacstelekes.techblog.sudoku3.model.Board;
-import org.kovacstelekes.techblog.sudoku3.model.Solver;
+import org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays;
+import org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams;
 
-import java.util.Optional;
+import java.util.function.Function;
 
-class SolverTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class BackTrackSolverTest {
     private final BoardParser parser = new BoardParser();
-
-    @BeforeEach
-    void reset() {
-        Board.nBoards = 0;
-    }
-
+    
     @Test
     void solveSimple() {
-        int[] values = parser.parse("""
+        int[] board = parser.parse("""
                     |   | 84|  3|
                     |13 | 5 | 94|
                     |9 5| 13| 7 |
@@ -32,24 +28,12 @@ class SolverTest {
                     | 2 |   |3 7|
                 """);
 
-        solveAndPrint(values);
-    }
-
-    private void solveAndPrint(int[] values) {
-        Board board = Board.fromState(values);
-        Solver solver = new Solver();
-        try {
-            Optional<Board> solved = solver.solve(board);
-            System.out.println(solved.map(Board::toString).orElse("no solution"));
-        } finally {
-            System.out.println("nChecks: " + solver.nChecks());
-            System.out.println("nBoards: " + Board.nBoards);
-        }
+        solveAndPrint(board, true);
     }
 
     @Test
     void solveMedium() {
-        int[] values = parser.parse("""
+        int[] board = parser.parse("""
                     |62 |  1|35 |
                     |374| 56|   |
                     | 5 | 4 |  2|
@@ -63,12 +47,12 @@ class SolverTest {
                     |791| 8 |2  |
                 """);
 
-        solveAndPrint(values);
+        solveAndPrint(board, true);
     }
 
     @Test
     void solveHard() {
-        int[] values = parser.parse("""
+        int[] board = parser.parse("""
                     |2  | 9 |7  |
                     |   |   | 68|
                     |1  |8  | 9 |
@@ -82,12 +66,12 @@ class SolverTest {
                     | 3 |7  |6 5|
                 """);
 
-        solveAndPrint(values);
+        solveAndPrint(board, true);
     }
 
     @Test
     void solveEmpty() {
-        int[] values = parser.parse("""
+        int[] board = parser.parse("""
                     |   |   |   |
                     |   |   |   |
                     |   |   |   |
@@ -101,12 +85,12 @@ class SolverTest {
                     |   |   |   |
                 """);
 
-        solveAndPrint(values);
+        solveAndPrint(board, true);
     }
 
     @Test
     void solveEvil() {
-        int[] values = parser.parse("""
+        int[] board = parser.parse("""
                     |9  |   | 4 |
                     | 7 |6  |3 9|
                     |   | 3 | 5 |
@@ -120,12 +104,12 @@ class SolverTest {
                     |  8|7  |   |
                 """);
 
-        solveAndPrint(values);
+        solveAndPrint(board, true);
     }
 
     @Test
     void detectImpossible() {
-        int[] values = parser.parse("""
+        int[] board = parser.parse("""
                     |9  |   | 4 |
                     | 7 |6  |3 9|
                     |   | 3 | 8 |
@@ -139,35 +123,56 @@ class SolverTest {
                     |6  |2  |   |
                 """);
 
-        solveAndPrint(values);
+        solveAndPrint(board, false);
     }
-
-    /*
-8 . . . . . . . .
-. . 3 6 . . . . .
-. 7 . . 9 . 2 . .
-. 5 . . . 7 . . .
-. . . . 4 5 7 . .
-. . . 1 . . . 3 .
-. . 1 . . . . 6 8
-. . 8 5 . . . 1 .
-. 9 . . . . 4 . .
-     */
 
     @Test
     void worldsHardestSudoku() {
-        int[] values = parser.parse("""
-8........
-..36.....
-.7..9.2..
-.5...7...
-....457..
-...1...3.
-..1....68
-..85...1.
-.9....4..
-                """);
+        int[] board = parser.parse("""
+                8........
+                ..36.....
+                .7..9.2..
+                .5...7...
+                ....457..
+                ...1...3.
+                ..1....68
+                ..85...1.
+                .9....4..
+                                """);
 
-        solveAndPrint(values);
+        solveAndPrint(board, true);
+    }
+
+    private void solveAndPrint(int[] board, boolean hasSolution) {
+        measureAndCheck(BackTrackSolverWithStreams::new, board, hasSolution);
+        measureAndCheck(BackTrackSolverWithArrays::new, board, hasSolution);
+    }
+
+    private void measureAndCheck(Function<int[], BackTrackSolver> solverConstructor, int[] board, boolean hasSolution) {
+        long start = System.currentTimeMillis();
+        long end = start + 20_000;
+        do {
+            boolean result = solve(solverConstructor, board);
+            assertThat(result).isEqualTo(hasSolution);
+        } while (System.currentTimeMillis() < end);
+
+        start = System.currentTimeMillis();
+        end = System.currentTimeMillis() + 10_000;
+        int cnt = 0;
+        do {
+            boolean result = solve(solverConstructor, board);
+            assertThat(result).isEqualTo(hasSolution);
+            cnt++;
+        } while (System.currentTimeMillis() < end);
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println(String.format(
+                "%s\telapsed: %d ms; cnt=%d, perf=%f",
+                solverConstructor.apply(board).getClass().getSimpleName(), elapsed, cnt, elapsed / (double) cnt
+        ));
+    }
+    
+    private boolean solve(Function<int[], BackTrackSolver> solverConstructor, int[] board) {
+        BackTrackSolver solver = solverConstructor.apply(board.clone());
+        return solver.solve();
     }
 }

@@ -1,4 +1,4 @@
-package org.kovacstelekes.techblog.sudoku.simplebacktrack;
+package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
 public class BackTrackSolverWithArrays extends BackTrackSolver {
     public BackTrackSolverWithArrays(int[] cells) {

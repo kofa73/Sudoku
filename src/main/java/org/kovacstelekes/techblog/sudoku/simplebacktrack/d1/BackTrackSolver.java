@@ -1,4 +1,4 @@
-package org.kovacstelekes.techblog.sudoku.simplebacktrack;
+package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
 public abstract class BackTrackSolver {
     // these store the cell indices pointing into `cells`

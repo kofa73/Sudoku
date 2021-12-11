@@ -130,29 +130,29 @@ class BacktrackingAlgorithmTest {
     }
 
     private void solveAndPrint(int[][] board) {
-//        long start = System.currentTimeMillis();
-//        long end = start + 20_000;
-//        do {
-//            int[][] copy = new int[9][];
-//            for (int i = 0; i < 9; i++) {
-//                copy[i] = board[i].clone();
-//            }
-//            result ^= solveIt(copy);
-//        } while (System.currentTimeMillis() < end);
-//
-//        start = System.currentTimeMillis();
-//        end = System.currentTimeMillis() + 10_000;
-//        int cnt = 0;
-//        do {
-//            int[][] copy = new int[9][];
-//            for (int i = 0; i < 9; i++) {
-//                copy[i] = board[i].clone();
-//            }
-//            result ^= solveIt(copy);
-//            cnt++;
-//        } while (System.currentTimeMillis() < end);
-//        long elapsed = System.currentTimeMillis() - start;
-//        System.out.println(String.format("elapsed: %d ms; cnt=%d, perf=%f", elapsed, cnt, elapsed / (double) cnt));
+        long start = System.currentTimeMillis();
+        long end = start + 20_000;
+        do {
+            int[][] copy = new int[9][];
+            for (int i = 0; i < 9; i++) {
+                copy[i] = board[i].clone();
+            }
+            result ^= solveIt(copy);
+        } while (System.currentTimeMillis() < end);
+
+        start = System.currentTimeMillis();
+        end = System.currentTimeMillis() + 10_000;
+        int cnt = 0;
+        do {
+            int[][] copy = new int[9][];
+            for (int i = 0; i < 9; i++) {
+                copy[i] = board[i].clone();
+            }
+            result ^= solveIt(copy);
+            cnt++;
+        } while (System.currentTimeMillis() < end);
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println(String.format("elapsed: %d ms; cnt=%d, perf=%f", elapsed, cnt, elapsed / (double) cnt));
 
         solver.solve(board);
         System.out.println("nChecks: " + solver.nChecks());

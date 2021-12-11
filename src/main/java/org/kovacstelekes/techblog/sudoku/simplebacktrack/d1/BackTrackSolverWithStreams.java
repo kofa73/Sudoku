@@ -1,5 +1,6 @@
-package org.kovacstelekes.techblog.sudoku.simplebacktrack;
+package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -26,7 +27,7 @@ public class BackTrackSolverWithStreams extends BackTrackSolver {
     }
 
     public boolean isSolved() {
-        return stream(cells).noneMatch(cellValue -> cellValue == 0);
+        return Arrays.stream(cells).noneMatch(cellValue -> cellValue == 0);
     }
 
 

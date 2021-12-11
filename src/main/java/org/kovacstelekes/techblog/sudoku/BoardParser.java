@@ -1,4 +1,4 @@
-package org.kovacstelekes.techblog.sudoku.simplebacktrack;
+package org.kovacstelekes.techblog.sudoku;
 
 import java.util.Iterator;
 

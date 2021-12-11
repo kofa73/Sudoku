@@ -1,8 +1,7 @@
-package org.kovacstelekes.techblog.sudoku.simplebacktrack;
+package org.kovacstelekes.techblog.sudoku.simplebacktrack.d2;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
+import org.kovacstelekes.techblog.sudoku.BoardParser;
 
 import java.util.function.Function;
 
@@ -143,8 +142,7 @@ class BackTrackSolverTest {
     }
 
     private void solveAndPrint(int[] board, boolean hasSolution) {
-        measureAndCheck(BackTrackSolverWithStreams::new, board, hasSolution);
-        measureAndCheck(BackTrackSolverWithArrays::new, board, hasSolution);
+        measureAndCheck(BackTrackSolver::new, board, hasSolution);
     }
 
     private void measureAndCheck(Function<int[], BackTrackSolver> solverConstructor, int[] board, boolean hasSolution) {

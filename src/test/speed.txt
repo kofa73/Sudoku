@@ -1,4 +1,5 @@
-backtrack
+laptop
+baeldung backtrack
 empty       elapsed: 10000 ms; cnt=26615, perf=0.375728
 simple      elapsed: 10000 ms; cnt=73914, perf=0.135292
 medium      elapsed: 10001 ms; cnt=1555, perf=6.431511
@@ -22,3 +23,22 @@ evil        BackTrackSolverWithStreams	elapsed: 28786 ms; cnt=1, perf=28786.0000
 evil        BackTrackSolverWithArrays	elapsed: 11357 ms; cnt=9, perf=1261.888889
 impossible  BackTrackSolverWithStreams	elapsed: 10008 ms; cnt=9, perf=1112.000000
 impossible  BackTrackSolverWithArrays	elapsed: 10039 ms; cnt=224, perf=44.816964
+
+desktop
+baeldung backtrack
+empty:          elapsed: 10000 ms; cnt=43476, perf=0.230012
+simple:         elapsed: 10000 ms; cnt=116237, perf=0.086031
+medium:         elapsed: 10001 ms; cnt=2238, perf=4.468722
+whardest:       elapsed: 10023 ms; cnt=311, perf=32.228296
+hard:           elapsed: 10066 ms; cnt=52, perf=193.576923
+evil:           elapsed: 10067 ms; cnt=36, perf=279.638889
+impossible:     elapsed: 10012 ms; cnt=475, perf=21.077895
+
+kofa 2D
+empty:          elapsed: 10000 ms; cnt=22689, perf=0.440742
+simple:         elapsed: 10000 ms; cnt=44349, perf=0.225484
+medium:         elapsed: 10009 ms; cnt=722, perf=13.862881
+whardest:       elapsed: 10040 ms; cnt=118, perf=85.084746
+hard:           elapsed: 10180 ms; cnt=20, perf=509.000000
+evil:           elapsed: 10477 ms; cnt=13, perf=805.923077
+impossible:     elapsed: 10001 ms; cnt=308, perf=32.470779

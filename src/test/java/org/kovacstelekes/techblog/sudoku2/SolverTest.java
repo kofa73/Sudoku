@@ -2,6 +2,7 @@ package org.kovacstelekes.techblog.sudoku2;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kovacstelekes.techblog.sudoku.BoardParser;
 import org.kovacstelekes.techblog.sudoku2.model.Board;
 
 import java.util.Optional;
@@ -17,7 +18,7 @@ class SolverTest {
 
     @Test
     void solveSimple() {
-        Board board = parser.parse("""
+        int[] values = parser.parse("""
                     |   | 84|  3|
                     |13 | 5 | 94|
                     |9 5| 13| 7 |
@@ -31,19 +32,12 @@ class SolverTest {
                     | 2 |   |3 7|
                 """);
 
-        solveAndPrint(board);
-    }
-
-    private void solveAndPrint(Board board) {
-        Optional<Board> solution = solver.solve(board);
-        solution.ifPresent(System.out::println);
-        System.out.println("solved = " + solution.isPresent());
-        System.out.println("nBoards = " + Board.nBoards);
+        solveAndPrint(values);
     }
 
     @Test
     void solveMedium() {
-        Board board = parser.parse("""
+        int[] values = parser.parse("""
                     |62 |  1|35 |
                     |374| 56|   |
                     | 5 | 4 |  2|
@@ -57,12 +51,12 @@ class SolverTest {
                     |791| 8 |2  |
                 """);
 
-        solveAndPrint(board);
+        solveAndPrint(values);
     }
 
     @Test
     void solveHard() {
-        Board board = parser.parse("""
+        int[] values = parser.parse("""
                     |2  | 9 |7  |
                     |   |   | 68|
                     |1  |8  | 9 |
@@ -76,12 +70,12 @@ class SolverTest {
                     | 3 |7  |6 5|
                 """);
 
-        solveAndPrint(board);
+        solveAndPrint(values);
     }
 
     @Test
     void solveEmpty() {
-        Board board = parser.parse("""
+        int[] values = parser.parse("""
                     |   |   |   |
                     |   |   |   |
                     |   |   |   |
@@ -95,12 +89,12 @@ class SolverTest {
                     |   |   |   |
                 """);
 
-        solveAndPrint(board);
+        solveAndPrint(values);
     }
 
     @Test
     void solveEvil() {
-        Board board = parser.parse("""
+        int[] values = parser.parse("""
                     |9  |   | 4 |
                     | 7 |6  |3 9|
                     |   | 3 | 5 |
@@ -114,12 +108,12 @@ class SolverTest {
                     |  8|7  |   |
                 """);
 
-        solveAndPrint(board);
+        solveAndPrint(values);
     }
 
     @Test
     void detectImpossible() {
-        Board board = parser.parse("""
+        int[] values = parser.parse("""
                     |9  |   | 4 |
                     | 7 |6  |3 9|
                     |   | 3 | 8 |
@@ -133,22 +127,30 @@ class SolverTest {
                     |6  |2  |   |
                 """);
 
-        solveAndPrint(board);
+        solveAndPrint(values);
     }
     @Test
     void worldsHardestSudoku() {
-        Board board = parser.parse("""
-8........
-..36.....
-.7..9.2..
-.5...7...
-....457..
-...1...3.
-..1....68
-..85...1.
-.9....4..
+        int[] values = parser.parse("""
+                    8........
+                    ..36.....
+                    .7..9.2..
+                    .5...7...
+                    ....457..
+                    ...1...3.
+                    ..1....68
+                    ..85...1.
+                    .9....4..
                 """);
 
-        solveAndPrint(board);
+        solveAndPrint(values);
+    }
+
+    private void solveAndPrint(int[] values) {
+        Board board = Board.fromState(values);
+        Optional<Board> solution = solver.solve(board);
+        solution.ifPresent(System.out::println);
+        System.out.println("solved = " + solution.isPresent());
+        System.out.println("nBoards = " + Board.nBoards);
     }
 }
