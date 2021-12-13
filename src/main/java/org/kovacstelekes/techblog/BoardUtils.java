@@ -22,6 +22,9 @@ public class BoardUtils {
      * @return values as an array, 9 elements by row, 81 elements in total
      */
     public static int[] parseToLinear(String puzzle) {
+        if (puzzle == null) {
+            return null;
+        }
         int[] cellValues = new int[BOARD_SIZE];
         int index = 0;
 
@@ -41,6 +44,7 @@ public class BoardUtils {
 
     /**
      * Converts 1D (linear) array to 2D (square)
+     *
      * @param cellValues 81 values or null
      * @return 9x9 grid; null if cellValues is null
      */
@@ -61,7 +65,7 @@ public class BoardUtils {
         return board;
     }
 
-    public static int[] toArray(int[][] board) {
+    public static int[] toCellValues(int[][] board) {
         if (board == null) {
             return null;
         }
@@ -93,12 +97,13 @@ public class BoardUtils {
 
     /**
      * Formats a linearised board to a String, compatible with parseToLinear
+     *
      * @param cellValues linearised board or null; 0 denotes empty/unsolved cell
      * @return an ASCII-art representation of the board
      */
     public static String format(int[] cellValues) {
         if (cellValues == null) {
-            return "<null>";
+            return null;
         }
         if (cellValues.length != BOARD_SIZE) {
             throw new IllegalArgumentException();
@@ -109,7 +114,7 @@ public class BoardUtils {
             int row = rowNumber(cellIndex);
             int colN = columnNumber(cellIndex);
             if (row % 3 == 0 && colN == 0) {
-                text.append("+---+---+---\n");
+                text.append("+---+---+---+\n");
             }
             if (colN % 3 == 0) {
                 text.append('|');
@@ -121,9 +126,10 @@ public class BoardUtils {
                 text.append(cellValue);
             }
             if (colN == 8) {
-                text.append("\n");
+                text.append("|\n");
             }
         }
+        text.append("+---+---+---+\n");
         return text.toString();
     }
 

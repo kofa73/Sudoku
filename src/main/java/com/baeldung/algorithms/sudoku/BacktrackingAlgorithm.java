@@ -3,7 +3,6 @@ package com.baeldung.algorithms.sudoku;
 import org.kovacstelekes.techblog.BoardUtils;
 import org.kovacstelekes.techblog.SudokuSolver;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class BacktrackingAlgorithm implements SudokuSolver {
@@ -20,7 +19,7 @@ public class BacktrackingAlgorithm implements SudokuSolver {
     public int[] solve(int[] cellValues) {
         int[][] board = BoardUtils.toBoard(cellValues);
         int[][] solution = solve(board);
-        return BoardUtils.toArray(solution);
+        return BoardUtils.toCellValues(solution);
     }
 
     private int[][] solve(int[][] board) {
@@ -46,8 +45,8 @@ public class BacktrackingAlgorithm implements SudokuSolver {
 
     private boolean isValid(int[][] board, int row, int column) {
         return rowConstraint(board, row) &&
-          columnConstraint(board, column) &&
-          subsectionConstraint(board, row, column);
+                columnConstraint(board, column) &&
+                subsectionConstraint(board, row, column);
     }
 
     private boolean subsectionConstraint(int[][] board, int row, int column) {
@@ -69,13 +68,13 @@ public class BacktrackingAlgorithm implements SudokuSolver {
     private boolean columnConstraint(int[][] board, int column) {
         boolean[] constraint = new boolean[BOARD_SIZE];
         return IntStream.range(BOARD_START_INDEX, BOARD_SIZE)
-          .allMatch(row -> checkConstraint(board, row, constraint, column));
+                .allMatch(row -> checkConstraint(board, row, constraint, column));
     }
 
     private boolean rowConstraint(int[][] board, int row) {
         boolean[] constraint = new boolean[BOARD_SIZE];
         return IntStream.range(BOARD_START_INDEX, BOARD_SIZE)
-          .allMatch(column -> checkConstraint(board, row, constraint, column));
+                .allMatch(column -> checkConstraint(board, row, constraint, column));
     }
 
     private boolean checkConstraint(int[][] board, int row, boolean[] constraint, int column) {

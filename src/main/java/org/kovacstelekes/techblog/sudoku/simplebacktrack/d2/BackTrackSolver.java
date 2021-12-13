@@ -1,46 +1,18 @@
 package org.kovacstelekes.techblog.sudoku.simplebacktrack.d2;
 
-public class BackTrackSolver {
+import org.kovacstelekes.techblog.BoardUtils;
+import org.kovacstelekes.techblog.SudokuSolver;
+
+public class BackTrackSolver implements SudokuSolver {
     // grid top-left corner row and column
     private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
     private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
 
+    @Override
     public int[] solve(int[] cellValues) {
-        int[][] board = boardFrom(cellValues);
+        int[][] board = BoardUtils.toBoard(cellValues);
         int[][] solution = solve(board, 0, 0);
-        return valuesFrom(solution);
-    }
-
-    private int[] valuesFrom(int[][] solution) {
-        if (solution == null) {
-            return null;
-        }
-
-        int cellValues[] = new int[9 * 9];
-        int cellIndex = 0;
-        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
-                cellValues[cellIndex] = solution[rowNumber][columnNumber];
-                cellIndex++;
-            }
-        }
-        return cellValues;
-    }
-
-    private int[][] boardFrom(int[] cellValues) {
-        if (cellValues.length != 9 * 9) {
-            throw new IllegalArgumentException();
-        }
-        int[][] board = new int[9][];
-        int cellIndex = 0;
-        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            board[rowNumber] = new int[9];
-            for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
-                board[rowNumber][columnNumber] = cellValues[cellIndex];
-                cellIndex++;
-            }
-        }
-        return board;
+        return BoardUtils.toCellValues(solution);
     }
 
     private int[][] solve(int[][] board, int rowStart, int columnStart) {
@@ -67,11 +39,30 @@ public class BackTrackSolver {
     }
 
     private boolean boardHasConflicts(int[][] board) {
+        return rowsHaveConflicts(board) || columnsHaveConflicts(board) || gridsHaveConflicts(board);
+    }
+
+    private boolean rowsHaveConflicts(int[][] board) {
         for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
-            if (!isValidRow(board[containerIndex])
-                    || !isValidColumn(containerIndex, board)
-                    || (!isValidGrid(containerIndex, board))
-            ) {
+            if (!isValidRow(board[containerIndex])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean columnsHaveConflicts(int[][] board) {
+        for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
+            if (!isValidColumn(containerIndex, board)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean gridsHaveConflicts(int[][] board) {
+        for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
+            if ((!isValidGrid(containerIndex, board))) {
                 return true;
             }
         }

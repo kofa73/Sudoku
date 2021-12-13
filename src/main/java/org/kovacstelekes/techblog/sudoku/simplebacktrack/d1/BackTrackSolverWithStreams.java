@@ -10,10 +10,7 @@ import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
 public class BackTrackSolverWithStreams extends BackTrackSolver {
-    public BackTrackSolverWithStreams(int[] cells) {
-        super(cells);
-    }
-
+    @Override
     int find(int value, int[] array) {
         return IntStream.range(0, array.length)
                 .filter(index -> array[index] == value)
@@ -21,20 +18,22 @@ public class BackTrackSolverWithStreams extends BackTrackSolver {
                 .orElse(-1);
     }
 
-    boolean isValid(int[] container) {
-        return digitCountsOf(container).values().stream()
+    @Override
+    boolean isValid(int[] container, int[] cellValues) {
+        return digitCountsOf(container, cellValues).values().stream()
                 .allMatch(numberOfOccurrances -> numberOfOccurrances < 2);
     }
 
-    public boolean isSolved() {
-        return Arrays.stream(cells).noneMatch(cellValue -> cellValue == 0);
+    @Override
+    boolean isSolved(int[] cellValues) {
+        return Arrays.stream(cellValues).noneMatch(cellValue -> cellValue == 0);
     }
 
 
-    private Map<Integer, Long> digitCountsOf(int[] container) {
+    private Map<Integer, Long> digitCountsOf(int[] container, int[] cellValues) {
         return digitCountsOf(
                 stream(container)
-                        .map(cellIndex -> cells[cellIndex])
+                        .map(cellIndex -> cellValues[cellIndex])
         );
     }
 

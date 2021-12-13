@@ -10,7 +10,7 @@ public enum Outcome {
     // updated, but still unsolved
     UPDATED_STILL_SEVERAL_POSSIBILITIES,
     // unsolved, not updated
-    SEVERAL_POSSIBILITIES_NO_CHANGE;
+    SEVERAL_POSSIBILITIES_NO_CHANGE
 
 //    static Outcome reduce(Outcome one, Outcome other) {
 //        checkNotNull(one, "one");

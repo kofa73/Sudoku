@@ -1,86 +1,72 @@
 package org.kovacstelekes.techblog.sudoku.simplebacktrack.d2;
 
-public class BackTrackSolverWithDeduction {
+import org.kovacstelekes.techblog.BoardUtils;
+import org.kovacstelekes.techblog.SudokuSolver;
+
+import java.util.Arrays;
+
+public class BackTrackSolverWithDeduction implements SudokuSolver {
     // grid top-left corner row and column
     private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
     private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
 
-    private int[][] cells;
-    private int nChecks = 0;
-
-    BackTrackSolverWithDeduction(int[] cellValues) {
-        if (cellValues.length != 9 * 9) {
-            throw new IllegalArgumentException();
+    @Override
+    public int[] solve(int[] cellValues) {
+        int[][] board = BoardUtils.toBoard(cellValues);
+        if (boardHasConflicts(board)) {
+            return null;
         }
-        cells = new int[9][];
-        int cellIndex = 0;
-        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            cells[rowNumber] = new int[9];
-            for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
-                cells[rowNumber][columnNumber] = cellValues[cellIndex];
-                cellIndex++;
-            }
-        }
+        int[][] solution = solve(board, 0, 0);
+        return BoardUtils.toCellValues(solution);
     }
 
-    public boolean solve() {
-        if (boardHasConflicts()) {
-            return false;
-        }
-        return solve(0, 0);
-    }
-
-    private boolean solve(int rowStart, int columnStart) {
-        deduceValues();
-        nChecks++;
+    private int[][] solve(int[][] board, int rowStart, int columnStart) {
+        deduceValues(board);
         for (int row = rowStart; row < 9; row++) {
             for (int column = columnStart; column < 9; column++) {
-                if (cells[row][column] == 0) {
-                    boolean[] takenValues = findTakenValues(row, column);
+                if (board[row][column] == 0) {
+                    boolean[] takenValues = findTakenValues(row, column, board);
                     for (int guessValue = 1; guessValue <= 9; guessValue++) {
                         if (!takenValues[guessValue]) {
-                            int[][] backup = backupCurrentState();
-                            cells[row][column] = guessValue;
-                            boolean solved = solve(row, column + 1);
-                            if (solved) {
-                                return true;
+                            int[][] backup = copyOf(board);
+                            board[row][column] = guessValue;
+                            int[][] solution = solve(board, row, column + 1);
+                            if (solution != null) {
+                                return solution;
                             } else {
-                                cells = backup;
+                                board = backup;
                             }
                         }
                     }
-                    return false;
+                    return null;
                 }
             }
             columnStart = 0;
         }
-        return true;
+        return board;
     }
 
-    private int[][] backupCurrentState() {
+    private int[][] copyOf(int[][] board) {
         int[][] backup = new int[9][];
         for (int row = 0; row < 9; row++) {
-            backup[row] = new int[9];
-            for (int column = 0; column < 9; column++) {
-                backup[row][column] = cells[row][column];
-            }
+            backup[row] = Arrays.copyOf(board[row], 9);
         }
         return backup;
     }
 
-    private void deduceValues() {
-        boolean progressed = false;
+    private void deduceValues(int[][] board) {
+        boolean progressed;
         do {
-            progressed = cellsWithSinglePossibleValuesFound();
+            progressed = cellsWithSinglePossibleValuesFound(board);
         } while (progressed);
     }
 
-    private boolean cellsWithSinglePossibleValuesFound() {
+    private boolean cellsWithSinglePossibleValuesFound(int[][] board) {
         boolean progressed = false;
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
-                if (cells[row][column] == 0) {
-                    boolean[] takenValues = findTakenValues(row, column);
+                if (board[row][column] == 0) {
+                    boolean[] takenValues = findTakenValues(row, column, board);
 
                     int singleValue = 0;
                     for (int possibleValue = 1; possibleValue <= 9; possibleValue++) {
@@ -95,7 +81,7 @@ public class BackTrackSolverWithDeduction {
                         }
                     }
                     if (singleValue > 0) {
-                        cells[row][column] = singleValue;
+                        board[row][column] = singleValue;
                         progressed = true;
                     }
                 }
@@ -104,16 +90,16 @@ public class BackTrackSolverWithDeduction {
         return progressed;
     }
 
-    private boolean[] findTakenValues(int row, int column) {
+    private boolean[] findTakenValues(int row, int column, int[][] board) {
         boolean[] takenValues = new boolean[10];
         for (int searchRow = 0; searchRow < 9; searchRow++) {
             if (searchRow != row) {
-                takenValues[cells[searchRow][column]] = true;
+                takenValues[board[searchRow][column]] = true;
             }
         }
         for (int searchColumn = 0; searchColumn < 9; searchColumn++) {
             if (searchColumn != column) {
-                takenValues[cells[row][searchColumn]] = true;
+                takenValues[board[row][searchColumn]] = true;
             }
         }
 
@@ -123,110 +109,32 @@ public class BackTrackSolverWithDeduction {
         for (int searchRow = startRow; searchRow < startRow + 3; searchRow++) {
             for (int searchColumn = startColumn; searchColumn < startColumn + 3; searchColumn++) {
                 if (!(searchRow == row && searchColumn == column)) {
-                    takenValues[cells[searchRow][searchColumn]] = true;
+                    takenValues[board[searchRow][searchColumn]] = true;
                 }
             }
         }
         return takenValues;
     }
 
-    public int nChecks() {
-        return nChecks;
-    }
-
-    private boolean boardHasConflicts() {
-        boolean hasConflicts = false;
-        for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
-            if (!isValidRow(containerIndex)
-                    || !isValidColumn(containerIndex)
-                    || (!isValidGrid(containerIndex))
-            ) {
-                hasConflicts = true;
-                break;
-            }
-        }
-        return hasConflicts;
-    }
-
-    private boolean isValidRow(int rowNumber) {
-        boolean[] seenDigit = new boolean[10];
-        for (int column = 0; column < 9; column++) {
-            int digit = cells[rowNumber][column];
-            if (digit != 0) {
-                if (seenDigit[digit]) {
-                    return false;
-                }
-                seenDigit[digit] = true;
-            }
-        }
-        return true;
-    }
-
-    private boolean isValidColumn(int columnNumber) {
-        boolean[] seenDigit = new boolean[10];
-        for (int row = 0; row < 9; row++) {
-            int digit = cells[row][columnNumber];
-            if (digit != 0) {
-                if (seenDigit[digit]) {
-                    return false;
-                }
-                seenDigit[digit] = true;
-            }
-        }
-        return true;
-    }
-
-    private boolean isValidGrid(int gridNumber) {
-        int startRow = GRID_STARTING_ROWS[gridNumber];
-        int startColumn = GRID_STARTING_COLUMNS[gridNumber];
-        boolean[] seenDigit = new boolean[10];
-        for (int row = startRow; row < startRow + 3; row++) {
-            for (int column = startColumn; column < startColumn + 3; column++) {
-                int digit = cells[row][column];
-                if (digit != 0) {
-                    if (seenDigit[digit]) {
-                        return false;
-                    }
-                    seenDigit[digit] = true;
-                }
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder text = new StringBuilder();
+    private boolean boardHasConflicts(int[][] board) {
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
-                if (row % 3 == 0 && column == 0) {
-                    text.append("+---+---+---\n");
-                }
-                if (column % 3 == 0) {
-                    text.append('|');
-                }
-                int cellValue = cells[row][column];
-                if (cellValue == 0) {
-                    text.append('.');
-                } else {
-                    text.append(cellValue);
-                }
-                if (column == 8) {
-                    text.append("\n");
-                }
-            }
-        }
-        return text.toString();
-    }
-
-    private boolean isSolved() {
-        for (int row = 0; row < 9; row++) {
-            for (int cellValue : cells[row]) {
-                if (cellValue == 0) {
-                    return false;
+                boolean[] takenValues = findTakenValues(row, column, board);
+                if (
+                        takenValues[1]
+                                && takenValues[2]
+                                && takenValues[3]
+                                && takenValues[4]
+                                && takenValues[5]
+                                && takenValues[6]
+                                && takenValues[7]
+                                && takenValues[8]
+                                && takenValues[9]
+                ) {
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 }

@@ -6,9 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- *
  * @param <V> the value type (Integer for the value of a cell, Cell for the position of a value in a Container)
-*/
+ */
 public class Options<V> {
     private final Set<Options<V>> relatedOptions = new HashSet<>();
 

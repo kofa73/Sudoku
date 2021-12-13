@@ -1,10 +1,7 @@
 package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
 public class BackTrackSolverWithArrays extends BackTrackSolver {
-    public BackTrackSolverWithArrays(int[] cells) {
-        super(cells);
-    }
-
+    @Override
     int find(int value, int[] array) {
         for (int index = 0; index < array.length; index++) {
             if (array[index] == value) {
@@ -14,10 +11,11 @@ public class BackTrackSolverWithArrays extends BackTrackSolver {
         return -1;
     }
 
-    boolean isValid(int[] container) {
+    @Override
+    boolean isValid(int[] container, int[] cellValues) {
         boolean[] seenDigit = new boolean[9];
         for (int indexInContainer = 0; indexInContainer < container.length; indexInContainer++) {
-            int digit = cells[container[indexInContainer]];
+            int digit = cellValues[container[indexInContainer]];
             if (digit != 0) {
                 int digitIndex = digit - 1;
                 if (seenDigit[digitIndex]) {
@@ -29,8 +27,9 @@ public class BackTrackSolverWithArrays extends BackTrackSolver {
         return true;
     }
 
-    boolean isSolved() {
-        for (int cellValue : cells) {
+    @Override
+    boolean isSolved(int[] cellValues) {
+        for (int cellValue : cellValues) {
             if (cellValue == 0) {
                 return false;
             }

@@ -16,7 +16,7 @@ abstract class Container {
         for (int i = 0; i < 9; i++) {
             possibleCellsHoldingDigits.add(new Options<>(name + '#' + ordinal + "-digit#" + i));
         }
-        for (int i = 0 ; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             possibleCellsHoldingDigits.get(i).addRelated(possibleCellsHoldingDigits);
         }
     }

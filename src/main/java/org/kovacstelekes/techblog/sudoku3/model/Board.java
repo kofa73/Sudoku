@@ -8,7 +8,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.function.Predicate.not;
 
 public class Board {
-    public static boolean disableDiags;
     private final List<Row> rows = new ArrayList<>();
     private final List<Column> columns = new ArrayList<>();
     private final List<Grid> grids = new ArrayList<>();
@@ -28,22 +27,17 @@ public class Board {
         checkArgument(values.length == 9 * 9);
         Board board = new Board();
 
-        Board.disableDiags = true;
-        try {
-            int index = 0;
-            for (Cell cell : board.cells) {
-                int cellValue = values[index];
-                if (cellValue >= 0 && cellValue <= 8) {
-                    cell.solution(cellValue);
-                } else if (cellValue != -1) {
-                    throw new IllegalArgumentException("Invalid cell value at index " + index + ": " + cellValue);
-                }
-                index++;
+        int index = 0;
+        for (Cell cell : board.cells) {
+            int cellValue = values[index];
+            if (cellValue >= 0 && cellValue <= 8) {
+                cell.solution(cellValue);
+            } else if (cellValue != -1) {
+                throw new IllegalArgumentException("Invalid cell value at index " + index + ": " + cellValue);
             }
-            return board;
-        } finally {
-            Board.disableDiags = false;
+            index++;
         }
+        return board;
     }
 
     private Board() {

@@ -1,62 +1,62 @@
-laptop
-baeldung backtrack
-empty       elapsed: 10000 ms; cnt=26615, perf=0.375728
-simple      elapsed: 10000 ms; cnt=73914, perf=0.135292
-medium      elapsed: 10001 ms; cnt=1555, perf=6.431511
-whardest    elapsed: 10040 ms; cnt=187, perf=53.689840
-hard        elapsed: 10180 ms; cnt=34, perf=299.411765
-evil        elapsed: 10439 ms; cnt=21, perf=497.095238
-impossible  elapsed: 10021 ms; cnt=334, perf=30.002994
+simple
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10000 ms; cnt=91331, perf=0.109492, sink=2060326354 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 10000 ms; cnt=19311, perf=0.517840, sink=-231476583 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 10000 ms; cnt=59508, perf=0.168045, sink=404306853 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 10001 ms; cnt=1681, perf=5.949435, sink=1781646638 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10000 ms; cnt=59743, perf=0.167384, sink=-1766846964 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10000 ms; cnt=113184, perf=0.088352, sink=309030457 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=1371857, perf=0.007289, sink=304330240 (ignore)
 
-Kofa backtrack
-empty       BackTrackSolverWithStreams	elapsed: 10003 ms; cnt=636, perf=15.727987
-empty       BackTrackSolverWithArrays	elapsed: 10000 ms; cnt=16488, perf=0.606502
-simple      BackTrackSolverWithStreams	elapsed: 10003 ms; cnt=1338, perf=7.476084
-simple      BackTrackSolverWithArrays	elapsed: 10000 ms; cnt=39011, perf=0.256338
-medium      BackTrackSolverWithStreams	elapsed: 10078 ms; cnt=21, perf=479.904762
-medium      BackTrackSolverWithArrays	elapsed: 10012 ms; cnt=530, perf=18.890566
-whardest    BackTrackSolverWithStreams	elapsed: 12970 ms; cnt=4, perf=3242.500000
-whardest    BackTrackSolverWithArrays	elapsed: 10008 ms; cnt=80, perf=125.100000
-hard        BackTrackSolverWithStreams	elapsed: 18755 ms; cnt=1, perf=18755.000000
-hard        BackTrackSolverWithArrays	elapsed: 10612 ms; cnt=15, perf=707.466667
-evil        BackTrackSolverWithStreams	elapsed: 28786 ms; cnt=1, perf=28786.000000
-evil        BackTrackSolverWithArrays	elapsed: 11357 ms; cnt=9, perf=1261.888889
-impossible  BackTrackSolverWithStreams	elapsed: 10008 ms; cnt=9, perf=1112.000000
-impossible  BackTrackSolverWithArrays	elapsed: 10039 ms; cnt=224, perf=44.816964
+medium
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10001 ms; cnt=2492, perf=4.013242, sink=-1543896188 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 10000 ms; cnt=19309, perf=0.517893, sink=-382512828 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 10000 ms; cnt=59163, perf=0.169025, sink=-1593013112 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 10305 ms; cnt=31, perf=332.419355, sink=-2125584541 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10007 ms; cnt=991, perf=10.097881, sink=-1443829540 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10001 ms; cnt=1994, perf=5.015547, sink=-262399374 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=964939, perf=0.010363, sink=197009485 (ignore)
 
-desktop
-baeldung backtrack
-empty:          elapsed: 10000 ms; cnt=43476, perf=0.230012
-simple:         elapsed: 10000 ms; cnt=116237, perf=0.086031
-medium:         elapsed: 10001 ms; cnt=2238, perf=4.468722
-whardest:       elapsed: 10023 ms; cnt=311, perf=32.228296
-hard:           elapsed: 10066 ms; cnt=52, perf=193.576923
-evil:           elapsed: 10067 ms; cnt=36, perf=279.638889
-impossible:     elapsed: 10012 ms; cnt=475, perf=21.077895
+'the world's hardest'
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10023 ms; cnt=239, perf=41.937238, sink=1714838680 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 10149 ms; cnt=43, perf=236.023256, sink=479075704 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 10064 ms; cnt=23, perf=437.565217, sink=1240130327 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 11032 ms; cnt=5, perf=2206.400000, sink=-967453446 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10036 ms; cnt=163, perf=61.570552, sink=499899823 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10006 ms; cnt=309, perf=32.381877, sink=-9550822 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=3775, perf=2.649007, sink=-1094177681 (ignore)
 
-kofa 2D
-empty:          elapsed: 10000 ms; cnt=22689, perf=0.440742
-simple:         elapsed: 10000 ms; cnt=44349, perf=0.225484
-medium:         elapsed: 10009 ms; cnt=722, perf=13.862881
-whardest:       elapsed: 10040 ms; cnt=118, perf=85.084746
-hard:           elapsed: 10180 ms; cnt=20, perf=509.000000
-evil:           elapsed: 10477 ms; cnt=13, perf=805.923077
-impossible:     elapsed: 10001 ms; cnt=308, perf=32.470779
+hard
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10092 ms; cnt=41, perf=246.146341, sink=2035793320 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 10002 ms; cnt=2242, perf=4.461195, sink=797739248 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 10036 ms; cnt=206, perf=48.718447, sink=-1450833262 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 13181 ms; cnt=1, perf=13181.000000, sink=798028093 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10090 ms; cnt=28, perf=360.357143, sink=2026327134 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10060 ms; cnt=52, perf=193.461538, sink=1813676907 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10002 ms; cnt=2720, perf=3.677206, sink=920071602 (ignore)
 
-kofa 2D optimised
-empty:      	elapsed: 10000 ms; cnt=24571, perf=0.406984
-simple:     	elapsed: 10000 ms; cnt=50523, perf=0.197930
-medium:     	elapsed: 10002 ms; cnt=851, perf=11.753231
-whardest:   	elapsed: 10011 ms; cnt=124, perf=80.733871
-hard:       	elapsed: 10027 ms; cnt=20, perf=501.350000
-evil:       	elapsed: 10354 ms; cnt=15, perf=690.266667
-impossible: 	elapsed: 10025 ms; cnt=346, perf=28.973988
+evil
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10031 ms; cnt=27, perf=371.518519, sink=1757832171 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 10002 ms; cnt=4357, perf=2.295616, sink=1024075835 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 10006 ms; cnt=800, perf=12.507500, sink=-1030176117 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 20043 ms; cnt=1, perf=20043.000000, sink=1981329526 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10209 ms; cnt=18, perf=567.166667, sink=188172295 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10217 ms; cnt=34, perf=300.500000, sink=-1973203477 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10003 ms; cnt=2410, perf=4.150622, sink=440573924 (ignore)
 
-2D with deduction:
-empty	        elapsed: 10000 ms; cnt=13056, perf=0.765931
-simple      	elapsed: 10000 ms; cnt=1734306, perf=0.005766
-medium      	elapsed: 10000 ms; cnt=1232315, perf=0.008115
-whardest    	elapsed: 10001 ms; cnt=3267, perf=3.061218
-hard        	elapsed: 10001 ms; cnt=2489, perf=4.018080
-evil        	elapsed: 10000 ms; cnt=2110, perf=4.739336
-impossible	    elapsed: 10022 ms; cnt=405, perf=24.745679
+empty
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10000 ms; cnt=33880, perf=0.295159, sink=-893206568 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 10008 ms; cnt=575, perf=17.405217, sink=1965825577 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 10002 ms; cnt=1359, perf=7.359823, sink=-644718357 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 10002 ms; cnt=937, perf=10.674493, sink=-2081512331 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10000 ms; cnt=32187, perf=0.310684, sink=-1901924581 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10000 ms; cnt=48609, perf=0.205723, sink=-2024088107 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=12161, perf=0.822301, sink=2120132359 (ignore)
+
+impossible (no solution)
+com.baeldung.algorithms.sudoku.BacktrackingAlgorithm	elapsed: 10000 ms; cnt=334, perf=29.940120, sink=0 (ignore)
+org.kovacstelekes.techblog.sudoku2.Solver	elapsed: 13767 ms; cnt=1, perf=13767.000000, sink=0 (ignore)
+org.kovacstelekes.techblog.sudoku3.Solver	elapsed: 18774 ms; cnt=1, perf=18774.000000, sink=0 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams	elapsed: 10124 ms; cnt=13, perf=778.769231, sink=0 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays	elapsed: 10005 ms; cnt=463, perf=21.609071, sink=0 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver	elapsed: 10015 ms; cnt=491, perf=20.397149, sink=0 (ignore)
+org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction	elapsed: 10006 ms; cnt=397, perf=25.204030, sink=0 (ignore)

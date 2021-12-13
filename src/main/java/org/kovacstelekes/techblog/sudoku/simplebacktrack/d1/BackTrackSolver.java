@@ -1,12 +1,12 @@
 package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
-public abstract class BackTrackSolver {
+import org.kovacstelekes.techblog.SudokuSolver;
+
+public abstract class BackTrackSolver implements SudokuSolver {
     // these store the cell indices pointing into `cells`
     private static final int[][] ROWS;
     private static final int[][] COLUMNS;
     private static final int[][] GRIDS;
-
-    private final int[] cells;
 
     static {
         ROWS = new int[9][];
@@ -37,80 +37,50 @@ public abstract class BackTrackSolver {
         return cellIndex / 9;
     }
 
-    BackTrackSolver(int[] cells) {
-        this.cells = cells.clone();
-    }
-
-    public boolean solve() {
-        if (isSolved()) {
-            return true;
+    @Override
+    public int[] solve(int[] cellValues) {
+        if (boardHasConflicts(cellValues)) {
+            return null;
         }
-        if (boardHasConflicts()) {
-            return false;
+        if (isSolved(cellValues)) {
+            return cellValues;
         }
 
-        int indexOfUnsolvedCell = find(0, cells);
+        int indexOfUnsolvedCell = find(0, cellValues);
 
         if (indexOfUnsolvedCell < 0 || indexOfUnsolvedCell >= 9 * 9) {
             throw new RuntimeException("impossible value for indexOfUnsolvedCell: " + indexOfUnsolvedCell);
         }
 
-        boolean solved = false;
+        int[] solution = null;
         for (int guessValue = 1; guessValue <= 9; guessValue++) {
-            cells[indexOfUnsolvedCell] = guessValue;
-            solved = solve();
-            if (solved) {
+            cellValues[indexOfUnsolvedCell] = guessValue;
+            solution = solve(cellValues);
+            if (solution != null) {
                 break;
             }
         }
-        if (!solved) {
-            cells[indexOfUnsolvedCell] = 0;
+        if (solution == null) {
+            cellValues[indexOfUnsolvedCell] = 0;
         }
-        return solved;
+        return solution;
     }
 
-    private boolean boardHasConflicts() {
-        boolean hasConflicts = false;
+    private boolean boardHasConflicts(int[] cellValues) {
         for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
-            if (!isValid(ROWS[containerIndex])
-                    || !isValid(COLUMNS[containerIndex])
-                    ||(!isValid(GRIDS[containerIndex]))
+            if (!isValid(ROWS[containerIndex], cellValues)
+                    || !isValid(COLUMNS[containerIndex], cellValues)
+                    || (!isValid(GRIDS[containerIndex], cellValues))
             ) {
-                hasConflicts = true;
-                break;
+                return true;
             }
         }
-        return hasConflicts;
+        return false;
     }
 
     abstract int find(int value, int[] array);
 
-    abstract boolean isValid(int[] container);
+    abstract boolean isValid(int[] container, int[] cellValues);
 
-    abstract boolean isSolved();
-
-    @Override
-    public String toString() {
-        StringBuilder text = new StringBuilder();
-        for (int cellIndex = 0; cellIndex < cells.length; cellIndex++) {
-            int row = rowNumber(cellIndex);
-            int colN = columnNumber(cellIndex);
-            if (row % 3 == 0 && colN == 0) {
-                text.append("+---+---+---\n");
-            }
-            if (colN % 3 == 0) {
-                text.append('|');
-            }
-            int cellValue = cells[cellIndex];
-            if (cellValue == 0) {
-                text.append('.');
-            } else {
-                text.append(cellValue);
-            }
-            if (colN == 8) {
-                text.append("\n");
-            }
-        }
-        return text.toString();
-    }
+    abstract boolean isSolved(int[] cellValues);
 }

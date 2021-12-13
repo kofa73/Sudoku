@@ -1,11 +1,11 @@
 package org.kovacstelekes.techblog.sudoku2.model;
 
+import org.kovacstelekes.techblog.BoardUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class Board {
     private final List<Container> containers = new ArrayList<>();
@@ -76,12 +76,13 @@ public class Board {
         AtomicReference<IterationOutcome> peekedOutcome = new AtomicReference<>();
         IterationOutcome outcome = containers.stream()
                 .flatMap(Container::removeSolvedValuesFromCells)
-                // FIXME: the takeWhile will cause the last 'INVALID' value to be skipped;
-                // therefore, the returned outcome will never indicate a contradiction
                 .peek(peeked -> peekedOutcome.set(peeked))
                 .takeWhile(iterationOutcome -> iterationOutcome.outcome() != Outcome.INVALID)
                 .reduce(IterationOutcome::reduce)
                 .orElse(new IterationOutcome(false, outcome()));
+        if (peekedOutcome.get() == null) {
+            return outcome;
+        }
         return IterationOutcome.reduce(peekedOutcome.get(), outcome);
     }
 
@@ -105,7 +106,7 @@ public class Board {
     }
 
     public static Board fromState(int[] values) {
-        checkArgument(values.length == 9 * 9);
+        BoardUtils.expectLinearBoard(values);
         Board board = new Board();
         int index = 0;
 
