@@ -9,7 +9,7 @@ public class BackTrackSolver {
     private int nChecks = 0;
 
     BackTrackSolver(int[] cellValues) {
-        if (cellValues.length != 9*9) {
+        if (cellValues.length != 9 * 9) {
             throw new IllegalArgumentException();
         }
         cells = new int[9][];
@@ -60,7 +60,7 @@ public class BackTrackSolver {
         for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
             if (!isValidRow(containerIndex)
                     || !isValidColumn(containerIndex)
-                    ||(!isValidGrid(containerIndex))
+                    || (!isValidGrid(containerIndex))
             ) {
                 hasConflicts = true;
                 break;
@@ -70,30 +70,45 @@ public class BackTrackSolver {
     }
 
     private boolean isValidRow(int rowNumber) {
-        return isValid(rowNumber, 0, rowNumber + 1, 9);
+        boolean[] seenDigit = new boolean[10];
+        for (int column = 0; column < 9; column++) {
+            int digit = cells[rowNumber][column];
+            if (digit != 0) {
+                if (seenDigit[digit]) {
+                    return false;
+                }
+                seenDigit[digit] = true;
+            }
+        }
+        return true;
     }
 
     private boolean isValidColumn(int columnNumber) {
-        return isValid(0, columnNumber, 9, columnNumber + 1);
+        boolean[] seenDigit = new boolean[10];
+        for (int row = 0; row < 9; row++) {
+            int digit = cells[row][columnNumber];
+            if (digit != 0) {
+                if (seenDigit[digit]) {
+                    return false;
+                }
+                seenDigit[digit] = true;
+            }
+        }
+        return true;
     }
 
     private boolean isValidGrid(int gridNumber) {
         int startRow = GRID_STARTING_ROWS[gridNumber];
         int startColumn = GRID_STARTING_COLUMNS[gridNumber];
-        return isValid(startRow, startColumn, startRow + 3, startColumn + 3);
-    }
-
-    private boolean isValid(int startRow, int startColumn, int limitRow, int limitColumn) {
-        boolean[] seenDigit = new boolean[9];
-        for (int row = startRow; row < limitRow; row++) {
-            for (int column = startColumn; column < limitColumn; column++) {
+        boolean[] seenDigit = new boolean[10];
+        for (int row = startRow; row < startRow + 3; row++) {
+            for (int column = startColumn; column < startColumn + 3; column++) {
                 int digit = cells[row][column];
                 if (digit != 0) {
-                    int digitIndex = digit - 1;
-                    if (seenDigit[digitIndex]) {
+                    if (seenDigit[digit]) {
                         return false;
                     }
-                    seenDigit[digitIndex] = true;
+                    seenDigit[digit] = true;
                 }
             }
         }

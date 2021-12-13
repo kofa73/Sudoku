@@ -1,0 +1,17 @@
+Using a single isValid
+BackTrackSolver	elapsed: 10016 ms; cnt=481, perf=20.823285
+BackTrackSolver	elapsed: 10000 ms; cnt=27839, perf=0.359208
+BackTrackSolver	elapsed: 11236 ms; cnt=9, perf=1248.444444
+BackTrackSolver	elapsed: 10149 ms; cnt=12, perf=845.750000
+BackTrackSolver	elapsed: 10075 ms; cnt=72, perf=139.930556
+BackTrackSolver	elapsed: 10000 ms; cnt=13035, perf=0.767165
+BackTrackSolver	elapsed: 10015 ms; cnt=191, perf=52.434555
+
+Split:
+BackTrackSolver	elapsed: 10007 ms; cnt=706, perf=14.174221
+BackTrackSolver	elapsed: 10000 ms; cnt=42313, perf=0.236334
+BackTrackSolver	elapsed: 10001 ms; cnt=12, perf=833.416667
+BackTrackSolver	elapsed: 10287 ms; cnt=20, perf=514.350000
+BackTrackSolver	elapsed: 10089 ms; cnt=115, perf=87.730435
+BackTrackSolver	elapsed: 10000 ms; cnt=21720, perf=0.460405
+BackTrackSolver	elapsed: 10029 ms; cnt=318, perf=31.537736

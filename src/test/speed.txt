@@ -42,3 +42,12 @@ whardest:       elapsed: 10040 ms; cnt=118, perf=85.084746
 hard:           elapsed: 10180 ms; cnt=20, perf=509.000000
 evil:           elapsed: 10477 ms; cnt=13, perf=805.923077
 impossible:     elapsed: 10001 ms; cnt=308, perf=32.470779
+
+kofa 2D optimised
+empty:      	elapsed: 10000 ms; cnt=24571, perf=0.406984
+simple:     	elapsed: 10000 ms; cnt=50523, perf=0.197930
+medium:     	elapsed: 10002 ms; cnt=851, perf=11.753231
+whardest:   	elapsed: 10011 ms; cnt=124, perf=80.733871
+hard:       	elapsed: 10027 ms; cnt=20, perf=501.350000
+evil:       	elapsed: 10354 ms; cnt=15, perf=690.266667
+impossible: 	elapsed: 10025 ms; cnt=346, perf=28.973988
