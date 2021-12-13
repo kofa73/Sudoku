@@ -15,3 +15,22 @@ BackTrackSolver	elapsed: 10287 ms; cnt=20, perf=514.350000
 BackTrackSolver	elapsed: 10089 ms; cnt=115, perf=87.730435
 BackTrackSolver	elapsed: 10000 ms; cnt=21720, perf=0.460405
 BackTrackSolver	elapsed: 10029 ms; cnt=318, perf=31.537736
+
+With deduction (w/o grid):
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=85422, perf=0.117066
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=462986, perf=0.021599
+BackTrackSolverWithDeduction	elapsed: 10001 ms; cnt=5918, perf=1.689929
+BackTrackSolverWithDeduction	elapsed: 10001 ms; cnt=3002, perf=3.331446
+BackTrackSolverWithDeduction	elapsed: 10007 ms; cnt=975, perf=10.263590
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=9532, perf=1.049098
+BackTrackSolverWithDeduction	elapsed: 10069 ms; cnt=119, perf=84.613445
+
+With deduction (w/ grid):
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=1232315, perf=0.008115
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=1734306, perf=0.005766
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=2110, perf=4.739336
+BackTrackSolverWithDeduction	elapsed: 10001 ms; cnt=2489, perf=4.018080
+BackTrackSolverWithDeduction	elapsed: 10001 ms; cnt=3267, perf=3.061218
+BackTrackSolverWithDeduction	elapsed: 10000 ms; cnt=13056, perf=0.765931
+BackTrackSolverWithDeduction	elapsed: 10022 ms; cnt=405, perf=24.745679
+

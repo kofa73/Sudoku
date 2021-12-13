@@ -51,3 +51,12 @@ whardest:   	elapsed: 10011 ms; cnt=124, perf=80.733871
 hard:       	elapsed: 10027 ms; cnt=20, perf=501.350000
 evil:       	elapsed: 10354 ms; cnt=15, perf=690.266667
 impossible: 	elapsed: 10025 ms; cnt=346, perf=28.973988
+
+2D with deduction:
+empty	        elapsed: 10000 ms; cnt=13056, perf=0.765931
+simple      	elapsed: 10000 ms; cnt=1734306, perf=0.005766
+medium      	elapsed: 10000 ms; cnt=1232315, perf=0.008115
+whardest    	elapsed: 10001 ms; cnt=3267, perf=3.061218
+hard        	elapsed: 10001 ms; cnt=2489, perf=4.018080
+evil        	elapsed: 10000 ms; cnt=2110, perf=4.739336
+impossible	    elapsed: 10022 ms; cnt=405, perf=24.745679
