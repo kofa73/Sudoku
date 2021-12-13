@@ -5,74 +5,83 @@ public class BackTrackSolver {
     private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
     private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
 
-    private final int[][] cells;
-    private int nChecks = 0;
+    public int[] solve(int[] cellValues) {
+        int[][] board = boardFrom(cellValues);
+        int[][] solution = solve(board, 0, 0);
+        return valuesFrom(solution);
+    }
 
-    BackTrackSolver(int[] cellValues) {
-        if (cellValues.length != 9 * 9) {
-            throw new IllegalArgumentException();
+    private int[] valuesFrom(int[][] solution) {
+        if (solution == null) {
+            return null;
         }
-        cells = new int[9][];
+
+        int cellValues[] = new int[9 * 9];
         int cellIndex = 0;
         for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            cells[rowNumber] = new int[9];
             for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
-                cells[rowNumber][columnNumber] = cellValues[cellIndex];
+                cellValues[cellIndex] = solution[rowNumber][columnNumber];
                 cellIndex++;
             }
         }
+        return cellValues;
     }
 
-    public boolean solve() {
-        return solve(0, 0);
-    }
-
-    private boolean solve(int rowStart, int columnStart) {
-        if (boardHasConflicts()) {
-            return false;
+    private int[][] boardFrom(int[] cellValues) {
+        if (cellValues.length != 9 * 9) {
+            throw new IllegalArgumentException();
         }
-        nChecks++;
+        int[][] board = new int[9][];
+        int cellIndex = 0;
+        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
+            board[rowNumber] = new int[9];
+            for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
+                board[rowNumber][columnNumber] = cellValues[cellIndex];
+                cellIndex++;
+            }
+        }
+        return board;
+    }
+
+    private int[][] solve(int[][] board, int rowStart, int columnStart) {
+        if (boardHasConflicts(board)) {
+            return null;
+        }
         for (int row = rowStart; row < 9; row++) {
             for (int column = columnStart; column < 9; column++) {
-                if (cells[row][column] == 0) {
+                if (board[row][column] == 0) {
                     for (int guessValue = 1; guessValue <= 9; guessValue++) {
-                        cells[row][column] = guessValue;
-                        boolean solved = solve(row, column + 1);
-                        if (solved) {
-                            return true;
+                        board[row][column] = guessValue;
+                        int[][] solution = solve(board, row, column + 1);
+                        if (solution != null) {
+                            return solution;
                         }
                     }
-                    cells[row][column] = 0;
-                    return false;
+                    board[row][column] = 0;
+                    return null;
                 }
             }
             columnStart = 0;
         }
-        return true;
+        return board;
     }
 
-    public int nChecks() {
-        return nChecks;
-    }
-
-    private boolean boardHasConflicts() {
-        boolean hasConflicts = false;
+    private boolean boardHasConflicts(int[][] board) {
         for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
-            if (!isValidRow(containerIndex)
-                    || !isValidColumn(containerIndex)
-                    || (!isValidGrid(containerIndex))
+            if (!isValidRow(board[containerIndex])
+                    || !isValidColumn(containerIndex, board)
+                    || (!isValidGrid(containerIndex, board))
             ) {
-                hasConflicts = true;
-                break;
+                return true;
             }
         }
-        return hasConflicts;
+        return false;
     }
 
-    private boolean isValidRow(int rowNumber) {
+    private boolean isValidRow(int[] row) {
         boolean[] seenDigit = new boolean[10];
         for (int column = 0; column < 9; column++) {
-            int digit = cells[rowNumber][column];
+            int digit = row[column];
             if (digit != 0) {
                 if (seenDigit[digit]) {
                     return false;
@@ -83,10 +92,10 @@ public class BackTrackSolver {
         return true;
     }
 
-    private boolean isValidColumn(int columnNumber) {
+    private boolean isValidColumn(int columnNumber, int[][] board) {
         boolean[] seenDigit = new boolean[10];
         for (int row = 0; row < 9; row++) {
-            int digit = cells[row][columnNumber];
+            int digit = board[row][columnNumber];
             if (digit != 0) {
                 if (seenDigit[digit]) {
                     return false;
@@ -97,54 +106,18 @@ public class BackTrackSolver {
         return true;
     }
 
-    private boolean isValidGrid(int gridNumber) {
+    private boolean isValidGrid(int gridNumber, int[][] board) {
         int startRow = GRID_STARTING_ROWS[gridNumber];
         int startColumn = GRID_STARTING_COLUMNS[gridNumber];
         boolean[] seenDigit = new boolean[10];
         for (int row = startRow; row < startRow + 3; row++) {
             for (int column = startColumn; column < startColumn + 3; column++) {
-                int digit = cells[row][column];
+                int digit = board[row][column];
                 if (digit != 0) {
                     if (seenDigit[digit]) {
                         return false;
                     }
                     seenDigit[digit] = true;
-                }
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder text = new StringBuilder();
-        for (int row = 0; row < 9; row++) {
-            for (int column = 0; column < 9; column++) {
-                if (row % 3 == 0 && column == 0) {
-                    text.append("+---+---+---\n");
-                }
-                if (column % 3 == 0) {
-                    text.append('|');
-                }
-                int cellValue = cells[row][column];
-                if (cellValue == 0) {
-                    text.append('.');
-                } else {
-                    text.append(cellValue);
-                }
-                if (column == 8) {
-                    text.append("\n");
-                }
-            }
-        }
-        return text.toString();
-    }
-
-    private boolean isSolved() {
-        for (int row = 0; row < 9; row++) {
-            for (int cellValue : cells[row]) {
-                if (cellValue == 0) {
-                    return false;
                 }
             }
         }

@@ -1,46 +1,47 @@
 package com.baeldung.algorithms.sudoku;
 
+import org.kovacstelekes.techblog.BoardUtils;
+import org.kovacstelekes.techblog.SudokuSolver;
+
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class BacktrackingAlgorithm {
+public class BacktrackingAlgorithm implements SudokuSolver {
 
-    static final int BOARD_SIZE = 9;
+    private static final int BOARD_SIZE = 9;
     private static final int SUBSECTION_SIZE = 3;
-    static final int BOARD_START_INDEX = 0;
+    private static final int BOARD_START_INDEX = 0;
 
     private static final int NO_VALUE = 0;
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 9;
 
-    private int nChecks = 0;
-
-    public int nChecks() {
-        return nChecks;
+    @Override
+    public int[] solve(int[] cellValues) {
+        int[][] board = BoardUtils.toBoard(cellValues);
+        int[][] solution = solve(board);
+        return BoardUtils.toArray(solution);
     }
 
-    public boolean solve(int[][] board) {
-        return solve(board, 1);
-    }
-
-    private boolean solve(int[][] board, int depth) {
-        nChecks++;
-//        System.out.println(String.format("%4d %s", depth, flatBoardDump(board)));
+    private int[][] solve(int[][] board) {
         for (int row = BOARD_START_INDEX; row < BOARD_SIZE; row++) {
             for (int column = BOARD_START_INDEX; column < BOARD_SIZE; column++) {
                 if (board[row][column] == NO_VALUE) {
                     for (int k = MIN_VALUE; k <= MAX_VALUE; k++) {
                         board[row][column] = k;
-                        if (isValid(board, row, column) && solve(board, depth + 1)) {
-                            return true;
+                        if (isValid(board, row, column)) {
+                            int[][] solution = solve(board);
+                            if (solution != null) {
+                                return solution;
+                            }
                         }
                         board[row][column] = NO_VALUE;
                     }
-                    return false;
+                    return null;
                 }
             }
         }
-        return true;
+        return board;
     }
 
     private boolean isValid(int[][] board, int row, int column) {
@@ -86,9 +87,5 @@ public class BacktrackingAlgorithm {
             }
         }
         return true;
-    }
-
-    private String flatBoardDump(int[][] board) {
-        return Arrays.stream(board).flatMapToInt(Arrays::stream).map(i -> i - 1).collect(StringBuffer::new, StringBuffer::append, StringBuffer::append).toString().replace("-1", ".");
     }
 }

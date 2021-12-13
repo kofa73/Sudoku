@@ -3,12 +3,16 @@ package org.kovacstelekes.techblog.sudoku.simplebacktrack.d2;
 import org.junit.jupiter.api.Test;
 import org.kovacstelekes.techblog.sudoku.BoardParser;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BackTrackSolverTest {
     private final BoardParser parser = new BoardParser();
+    private final BackTrackSolver backTrackSolver = new BackTrackSolver();
+    // stores the solution so the call does not get optimised away to no-op
+    private int[] solution;
     
     @Test
     void solveSimple() {
@@ -141,24 +145,25 @@ class BackTrackSolverTest {
         solveAndPrint(board, true);
     }
 
-    private void solveAndPrint(int[] board, boolean hasSolution) {
-        measureAndCheck(BackTrackSolver::new, board, hasSolution);
+    private void solveAndPrint(int[] cellValues, int[] correctSolution) {
+        measureAndCheck(cellValues, correctSolution);
     }
 
-    private void measureAndCheck(Function<int[], BackTrackSolver> solverConstructor, int[] board, boolean hasSolution) {
+    private void measureAndCheck(int[] cellValues, int[] correctSolution) {
+        solution = backTrackSolver.solve(cellValues);
+        assertThat(solution).isEqualTo(correctSolution);
+
         long start = System.currentTimeMillis();
         long end = start + 20_000;
         do {
-            boolean result = solve(solverConstructor, board);
-            assertThat(result).isEqualTo(hasSolution);
+            solution = backTrackSolver.solve(cellValues);
         } while (System.currentTimeMillis() < end);
 
         start = System.currentTimeMillis();
         end = System.currentTimeMillis() + 10_000;
         int cnt = 0;
         do {
-            boolean result = solve(solverConstructor, board);
-            assertThat(result).isEqualTo(hasSolution);
+            solution = backTrackSolver.solve(cellValues);
             cnt++;
         } while (System.currentTimeMillis() < end);
         long elapsed = System.currentTimeMillis() - start;
@@ -166,10 +171,5 @@ class BackTrackSolverTest {
                 "%s\telapsed: %d ms; cnt=%d, perf=%f",
                 solverConstructor.apply(board).getClass().getSimpleName(), elapsed, cnt, elapsed / (double) cnt
         ));
-    }
-    
-    private boolean solve(Function<int[], BackTrackSolver> solverConstructor, int[] board) {
-        BackTrackSolver solver = solverConstructor.apply(board.clone());
-        return solver.solve();
     }
 }

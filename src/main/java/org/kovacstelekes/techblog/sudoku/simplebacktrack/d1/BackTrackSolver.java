@@ -2,12 +2,11 @@ package org.kovacstelekes.techblog.sudoku.simplebacktrack.d1;
 
 public abstract class BackTrackSolver {
     // these store the cell indices pointing into `cells`
-    static final int[][] ROWS;
-    static final int[][] COLUMNS;
-    static final int[][] GRIDS;
+    private static final int[][] ROWS;
+    private static final int[][] COLUMNS;
+    private static final int[][] GRIDS;
 
-    final int[] cells;
-    private int nChecks = 0;
+    private final int[] cells;
 
     static {
         ROWS = new int[9][];
@@ -49,7 +48,7 @@ public abstract class BackTrackSolver {
         if (boardHasConflicts()) {
             return false;
         }
-        nChecks++;
+
         int indexOfUnsolvedCell = find(0, cells);
 
         if (indexOfUnsolvedCell < 0 || indexOfUnsolvedCell >= 9 * 9) {
@@ -68,10 +67,6 @@ public abstract class BackTrackSolver {
             cells[indexOfUnsolvedCell] = 0;
         }
         return solved;
-    }
-
-    public int nChecks() {
-        return nChecks;
     }
 
     private boolean boardHasConflicts() {
