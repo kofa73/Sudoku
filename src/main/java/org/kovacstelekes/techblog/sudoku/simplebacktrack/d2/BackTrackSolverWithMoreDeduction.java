@@ -9,6 +9,7 @@ public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
     // grid top-left corner row and column
     private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
     private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
+    private static final boolean[] NO_DIGITS_POSSIBLE = new boolean[10];
 
     @Override
     public int[] solve(int[] cellValues) {
@@ -22,6 +23,9 @@ public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
 
     private int[][] solve(int[][] board, int rowStart, int columnStart) {
         deduceValues(board);
+        if (boardHasConflicts(board)) {
+            return null;
+        }
         for (int row = rowStart; row < 9; row++) {
             for (int column = columnStart; column < 9; column++) {
                 if (board[row][column] == 0) {
@@ -55,22 +59,38 @@ public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
     }
 
     private void deduceValues(int[][] board) {
+        // row;column;digit not possible at this position
+        boolean[][][] takenValues = findTakenValues(board);
         boolean progressed;
         do {
-            progressed = cellsWithSinglePossibleValueFound(board)
-                    || digitsWithSinglePossibleLocationFound(board);
+            progressed = cellsWithSinglePossibleValueFound(board, takenValues)
+                   /* || digitsWithSinglePossibleLocationFound(board)*/;
         } while (progressed);
     }
 
-    private boolean digitsWithSinglePossibleLocationFound(int[][] board) {
-//        System.out.println(Arrays.toString(BoardUtils.toCellValues(board)));
+    private boolean[][][] findTakenValues(int[][] board) {
+        boolean[][][] takenValues = new boolean[9][][];
         for (int row = 0; row < 9; row++) {
-            int[] currentRow = board[row];
+            takenValues[row] = new boolean[9][];
+            for (int column = 0; column < 9; column++) {
+                if (board[row][column] != 0) {
+                    // already solved; let's not allocate anything
+                    takenValues[row][column] = NO_DIGITS_POSSIBLE;
+                } else {
+                    takenValues[row][column] = findTakenValues(row, column, board);
+                }
+            }
+        }
+        return takenValues;
+    }
+
+    private boolean digitsWithSinglePossibleLocationFound(int[][] board) {
+        for (int row = 0; row < 9; row++) {
             for (int digit = 1; digit <= 9; digit++) {
-                if (find(digit, currentRow) == -1) { // digit not yet solved
+                if (find(digit, board[row]) == -1) { // digit not yet solved
                     int singlePossibleLocation = -1;
                     for (int column = 0; column < 9; column++) {
-                        if (currentRow[column] == 0) {
+                        if (board[row][column] == 0) {
                             boolean[] takenValues = findTakenValues(row, column, board);
                             if (!takenValues[digit]) {
                                 if (singlePossibleLocation == -1) {
@@ -85,7 +105,6 @@ public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
                     }
                     if (singlePossibleLocation != -1) {
                         board[row][singlePossibleLocation] = digit;
-//                        System.out.println(String.format("%d;%d=%d", row, singlePossibleLocation, digit));
                         return true;
                     }
                 }
@@ -103,16 +122,19 @@ public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
         return -1;
     }
 
-    private boolean cellsWithSinglePossibleValueFound(int[][] board) {
+    private boolean cellsWithSinglePossibleValueFound(int[][] board, boolean[][][] takenValues) {
         boolean progressed = false;
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
+                if (boardHasConflicts(board)) {
+                    return false;
+                }
                 if (board[row][column] == 0) {
-                    boolean[] takenValues = findTakenValues(row, column, board);
+                    boolean[] takenValuesForCell = takenValues[row][column];
 
                     int singleValue = 0;
                     for (int possibleValue = 1; possibleValue <= 9; possibleValue++) {
-                        if (!takenValues[possibleValue]) {
+                        if (!takenValuesForCell[possibleValue]) {
                             if (singleValue != 0) {
                                 // already found a possible value; now another -> not unique
                                 singleValue = -1;
@@ -124,6 +146,8 @@ public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
                     }
                     if (singleValue > 0) {
                         board[row][column] = singleValue;
+//                        System.out.println(String.format("%d;%d=%d", row,column,singleValue));
+                        takenValues[row][column] = NO_DIGITS_POSSIBLE;
                         progressed = true;
                     }
                 }
