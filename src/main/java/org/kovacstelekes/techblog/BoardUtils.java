@@ -46,7 +46,7 @@ public class BoardUtils {
      * Converts 1D (linear) array to 2D (square)
      *
      * @param cellValues 81 values or null
-     * @return 9x9 grid; null if cellValues is null
+     * @return 9x9 grid; null if board is null
      */
     public static int[][] toBoard(int[] cellValues) {
         if (cellValues == null) {

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SolverTest {
     private int sink;
-    private final boolean measure = true;
+    private final boolean measure = false;
 
     @ParameterizedTest
     @MethodSource("solvers")
@@ -332,7 +332,7 @@ class SolverTest {
 //                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams(),
 //                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays(),
 //                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver(),
-//                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction()
+//                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction(),
                 new BackTrackSolverWithMoreDeduction()
         );
     }
