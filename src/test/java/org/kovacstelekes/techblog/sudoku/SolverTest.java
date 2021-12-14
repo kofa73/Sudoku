@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kovacstelekes.techblog.BoardUtils;
 import org.kovacstelekes.techblog.SudokuSolver;
+import org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithMoreDeduction;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -244,6 +245,43 @@ class SolverTest {
         solveAndPrint(solver, board, solution);
     }
 
+    @ParameterizedTest
+    @MethodSource("solvers")
+    void puzzle17(SudokuSolver solver) {
+        String board = ("""
+                +---+---+---+
+                |...|...|.1.|
+                |4..|...|...|
+                |.2.|...|...|
+                +---+---+---+
+                |...|.5.|4.7|
+                |..8|...|3..|
+                |..1|.9.|...|
+                +---+---+---+
+                |3..|4..|2..|
+                |.5.|1..|...|
+                |...|8.6|...|
+                +---+---+---+                
+                """);
+
+        String solution = """
+                |693|784|512|
+                |487|512|936|
+                |125|963|874|
+                +---+---+---+
+                |932|651|487|
+                |568|247|391|
+                |741|398|625|
+                +---+---+---+
+                |319|475|268|
+                |856|129|743|
+                |274|836|159|
+                +---+---+---+
+                """;
+
+        solveAndPrint(solver, board, solution);
+    }
+
     private void solveAndPrintAnySolution(SudokuSolver solver, String board) {
         int[] cellValues = BoardUtils.parseToLinear(board);
         int[] solutionFromSolver = solver.solve(cellValues.clone());
@@ -288,13 +326,14 @@ class SolverTest {
 
     static Stream<SudokuSolver> solvers() {
         return Stream.of(
-                new BacktrackingAlgorithm(),
-                new org.kovacstelekes.techblog.sudoku2.Solver(),
-                new org.kovacstelekes.techblog.sudoku3.Solver(),
-                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams(),
-                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays(),
-                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver(),
-                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction()
+//                new BacktrackingAlgorithm(),
+//                new org.kovacstelekes.techblog.sudoku2.Solver(),
+//                new org.kovacstelekes.techblog.sudoku3.Solver(),
+//                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithStreams(),
+//                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d1.BackTrackSolverWithArrays(),
+//                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolver(),
+//                new org.kovacstelekes.techblog.sudoku.simplebacktrack.d2.BackTrackSolverWithDeduction()
+                new BackTrackSolverWithMoreDeduction()
         );
     }
 }

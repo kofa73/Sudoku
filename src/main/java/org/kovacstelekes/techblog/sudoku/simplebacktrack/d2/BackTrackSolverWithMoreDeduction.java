@@ -5,7 +5,7 @@ import org.kovacstelekes.techblog.SudokuSolver;
 
 import java.util.Arrays;
 
-public class BackTrackSolverWithDeduction implements SudokuSolver {
+public class BackTrackSolverWithMoreDeduction implements SudokuSolver {
     // grid top-left corner row and column
     private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
     private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
@@ -57,8 +57,50 @@ public class BackTrackSolverWithDeduction implements SudokuSolver {
     private void deduceValues(int[][] board) {
         boolean progressed;
         do {
-            progressed = cellsWithSinglePossibleValueFound(board);
+            progressed = cellsWithSinglePossibleValueFound(board)
+                    || digitsWithSinglePossibleLocationFound(board);
         } while (progressed);
+    }
+
+    private boolean digitsWithSinglePossibleLocationFound(int[][] board) {
+//        System.out.println(Arrays.toString(BoardUtils.toCellValues(board)));
+        for (int row = 0; row < 9; row++) {
+            int[] currentRow = board[row];
+            for (int digit = 1; digit <= 9; digit++) {
+                if (find(digit, currentRow) == -1) { // digit not yet solved
+                    int singlePossibleLocation = -1;
+                    for (int column = 0; column < 9; column++) {
+                        if (currentRow[column] == 0) {
+                            boolean[] takenValues = findTakenValues(row, column, board);
+                            if (!takenValues[digit]) {
+                                if (singlePossibleLocation == -1) {
+                                    singlePossibleLocation = column;
+                                } else {
+                                    // found the 2nd potential location -> not unique
+                                    singlePossibleLocation = -1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (singlePossibleLocation != -1) {
+                        board[row][singlePossibleLocation] = digit;
+//                        System.out.println(String.format("%d;%d=%d", row, singlePossibleLocation, digit));
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    int find(int value, int[] array) {
+        for (int index = 0; index < array.length; index++) {
+            if (array[index] == value) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     private boolean cellsWithSinglePossibleValueFound(int[][] board) {
