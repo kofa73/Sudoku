@@ -88,7 +88,7 @@ public class BoardUtils {
     }
 
     private static String digitsOf(String line) {
-        String digits = line.replaceAll("[^0-9 \\.]", "").replaceAll("[ \\.]", "0");
+        String digits = line.replaceAll("[^0-9 .]", "").replaceAll("[ .]", "0");
         if (digits.length() != 9) {
             throw new RuntimeException("Malformed line: " + line);
         }

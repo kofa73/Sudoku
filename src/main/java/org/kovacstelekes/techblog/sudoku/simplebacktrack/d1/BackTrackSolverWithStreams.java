@@ -21,7 +21,7 @@ public class BackTrackSolverWithStreams extends BackTrackSolver {
     @Override
     boolean isValid(int[] container, int[] cellValues) {
         return digitCountsOf(container, cellValues).values().stream()
-                .allMatch(numberOfOccurrances -> numberOfOccurrances < 2);
+                .allMatch(numberOfOccurrences -> numberOfOccurrences < 2);
     }
 
     @Override
