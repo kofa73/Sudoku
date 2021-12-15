@@ -3,10 +3,21 @@ package org.kovacstelekes.techblog.sudoku.simplebacktrack.d2;
 import org.kovacstelekes.techblog.BoardUtils;
 
 class Board implements Cloneable {
+    /**
+     * Cell values, 9x9. 0 is unsolved; 1..9 are solved values
+     */
     private final int[][] board;
+    /**
+     * indexed by [row][column][digit], where row and column are 0..9, digit 1..9 with
+     * digit = 0 being unused (for convenience)
+     */
     private final boolean[][][] takenDigits;
 
     private static final boolean[] NO_DIGITS_POSSIBLE = null;
+
+    // grid top-left corner row and column for 3x3 grids
+    private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+    private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
 
     // indexed by row/column/grid number (0..8); value is 9-element array of row or column numbers
     private final static int[][] ROW_NUMBERS_FOR_ROWS = new int[9][];
@@ -17,45 +28,37 @@ class Board implements Cloneable {
     private final static int[][] COLUMN_NUMBERS_FOR_GRIDS = new int[9][];
 
     static {
-        setupRows();
-        setupColumns();
-        setupGrids();
-    }
-
-    private static void setupGrids() {
-        // grid top-left corner row and column
-        int[] gridStartingRows = {0, 0, 0, 3, 3, 3, 6, 6, 6};
-        int[] gridStartingColumns = {0, 3, 6, 0, 3, 6, 0, 3, 6};
-
-        for (int gridNumber = 0; gridNumber < 9; gridNumber++) {
-            ROW_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
-            COLUMN_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
-            for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
-                ROW_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = gridStartingRows[gridNumber] + cellIndexInContainer / 3;
-                COLUMN_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = gridStartingColumns[gridNumber] + cellIndexInContainer % 3;
-            }
+        for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
+            setupRows(containerIndex);
+            setupColumns(containerIndex);
+            setupGrids(containerIndex);
         }
     }
 
-    private static void setupColumns() {
-        for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
-            ROW_NUMBERS_FOR_COLUMNS[columnNumber] = new int[9];
-            COLUMN_NUMBERS_FOR_COLUMNS[columnNumber] = new int[9];
-            for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
-                ROW_NUMBERS_FOR_COLUMNS[columnNumber][cellIndexInContainer] = cellIndexInContainer;
-                COLUMN_NUMBERS_FOR_COLUMNS[columnNumber][cellIndexInContainer] = columnNumber;
-            }
+    private static void setupRows(int rowNumber) {
+        ROW_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
+        COLUMN_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
+        for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
+            ROW_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = rowNumber;
+            COLUMN_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = cellIndexInContainer;
         }
     }
 
-    private static void setupRows() {
-        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            ROW_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
-            COLUMN_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
-            for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
-                ROW_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = rowNumber;
-                COLUMN_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = cellIndexInContainer;
-            }
+    private static void setupColumns(int columnNumber) {
+        ROW_NUMBERS_FOR_COLUMNS[columnNumber] = new int[9];
+        COLUMN_NUMBERS_FOR_COLUMNS[columnNumber] = new int[9];
+        for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
+            ROW_NUMBERS_FOR_COLUMNS[columnNumber][cellIndexInContainer] = cellIndexInContainer;
+            COLUMN_NUMBERS_FOR_COLUMNS[columnNumber][cellIndexInContainer] = columnNumber;
+        }
+    }
+
+    private static void setupGrids(int gridNumber) {
+        ROW_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
+        COLUMN_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
+        for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
+            ROW_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = GRID_STARTING_ROWS[gridNumber] + cellIndexInContainer / 3;
+            COLUMN_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = GRID_STARTING_COLUMNS[gridNumber] + cellIndexInContainer % 3;
         }
     }
 
@@ -64,7 +67,7 @@ class Board implements Cloneable {
         for (int row = 0; row < 9; row++) {
             this.board[row] = board[row].clone();
         }
-        takenDigits = createTakenDigitsField();
+        takenDigits = initialiseTakenDigits();
         populateTakenDigits();
     }
 
@@ -73,6 +76,7 @@ class Board implements Cloneable {
         this.takenDigits = takenDigits;
     }
 
+    @Override
     public Board clone() {
         int[][] copyOfValues = new int[9][];
         boolean[][][] copyOfTakenDigits = new boolean[9][][];
@@ -96,7 +100,7 @@ class Board implements Cloneable {
         } while (updated);
     }
 
-    private boolean[][][] createTakenDigitsField() {
+    private boolean[][][] initialiseTakenDigits() {
         boolean[][][] takenDigits = new boolean[9][][];
         for (int row = 0; row < 9; row++) {
             takenDigits[row] = new boolean[9][];
@@ -107,17 +111,17 @@ class Board implements Cloneable {
     private void populateTakenDigits() {
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
-                if (board[row][column] != 0) {
+                if (!unsolvedCellAt(row, column)) {
                     // already solved; let's not allocate anything
                     takenDigits[row][column] = NO_DIGITS_POSSIBLE;
                 } else {
-                    takenDigits[row][column] = findTakenDigits(row, column);
+                    takenDigits[row][column] = findTakenDigitsForCellAt(row, column);
                 }
             }
         }
     }
 
-    private void updateValuesAffectedByCellAt(int row, int column) {
+    private void updateTakenDigitsForNeighboursOfCellAt(int row, int column) {
         int digit = board[row][column];
         int gridNumber = gridNumberFor(row, column);
         int[] rowNumbersForGrid = ROW_NUMBERS_FOR_GRIDS[gridNumber];
@@ -145,17 +149,20 @@ class Board implements Cloneable {
         return (row / 3) * 3 + column / 3;
     }
 
-    private boolean[] findTakenDigits(int row, int column) {
+    private boolean[] findTakenDigitsForCellAt(int row, int column) {
         boolean[] takenDigits = new boolean[10];
-        scanContainer(ROW_NUMBERS_FOR_ROWS[row], COLUMN_NUMBERS_FOR_ROWS[row], takenDigits, row, column);
-        scanContainer(ROW_NUMBERS_FOR_COLUMNS[column], COLUMN_NUMBERS_FOR_COLUMNS[column], takenDigits, row, column);
+        registerTakenDigitsFromCellsOfContainer(ROW_NUMBERS_FOR_ROWS[row], COLUMN_NUMBERS_FOR_ROWS[row], takenDigits, row, column);
+        registerTakenDigitsFromCellsOfContainer(ROW_NUMBERS_FOR_COLUMNS[column], COLUMN_NUMBERS_FOR_COLUMNS[column], takenDigits, row, column);
         int grid = gridNumberFor(row, column);
-        scanContainer(ROW_NUMBERS_FOR_GRIDS[grid], COLUMN_NUMBERS_FOR_GRIDS[grid], takenDigits, row, column);
+        registerTakenDigitsFromCellsOfContainer(ROW_NUMBERS_FOR_GRIDS[grid], COLUMN_NUMBERS_FOR_GRIDS[grid], takenDigits, row, column);
 
         return takenDigits;
     }
 
-    private void scanContainer(
+    // the digits from cells of this container must be excluded as options
+    // of the cell at [row;column]. 0 (unsolved) is registered as well, but
+    // that is unused (never checked) and won't cause problems.
+    private void registerTakenDigitsFromCellsOfContainer(
             int[] rowsOfContainer,
             int[] columnsOfContainer,
             boolean[] takenDigits,
@@ -183,7 +190,7 @@ class Board implements Cloneable {
     public void setCell(int value, int row, int column) {
         board[row][column] = value;
         takenDigits[row][column] = NO_DIGITS_POSSIBLE;
-        updateValuesAffectedByCellAt(row, column);
+        updateTakenDigitsForNeighboursOfCellAt(row, column);
     }
 
     public int[][] board() {
