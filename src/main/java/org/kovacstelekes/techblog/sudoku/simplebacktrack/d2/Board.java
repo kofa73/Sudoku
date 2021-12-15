@@ -6,9 +6,6 @@ class Board implements Cloneable {
     private final int[][] board;
     private final boolean[][][] takenDigits;
 
-    // grid top-left corner row and column
-    private static final int[] GRID_STARTING_ROWS = {0, 0, 0, 3, 3, 3, 6, 6, 6};
-    private static final int[] GRID_STARTING_COLUMNS = {0, 3, 6, 0, 3, 6, 0, 3, 6};
     private static final boolean[] NO_DIGITS_POSSIBLE = null;
 
     // indexed by row/column/grid number (0..8); value is 9-element array of row or column numbers
@@ -20,14 +17,27 @@ class Board implements Cloneable {
     private final static int[][] COLUMN_NUMBERS_FOR_GRIDS = new int[9][];
 
     static {
-        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            ROW_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
-            COLUMN_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
+        setupRows();
+        setupColumns();
+        setupGrids();
+    }
+
+    private static void setupGrids() {
+        // grid top-left corner row and column
+        int[] gridStartingRows = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+        int[] gridStartingColumns = {0, 3, 6, 0, 3, 6, 0, 3, 6};
+
+        for (int gridNumber = 0; gridNumber < 9; gridNumber++) {
+            ROW_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
+            COLUMN_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
             for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
-                ROW_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = rowNumber;
-                COLUMN_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = cellIndexInContainer;
+                ROW_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = gridStartingRows[gridNumber] + cellIndexInContainer / 3;
+                COLUMN_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = gridStartingColumns[gridNumber] + cellIndexInContainer % 3;
             }
         }
+    }
+
+    private static void setupColumns() {
         for (int columnNumber = 0; columnNumber < 9; columnNumber++) {
             ROW_NUMBERS_FOR_COLUMNS[columnNumber] = new int[9];
             COLUMN_NUMBERS_FOR_COLUMNS[columnNumber] = new int[9];
@@ -36,12 +46,15 @@ class Board implements Cloneable {
                 COLUMN_NUMBERS_FOR_COLUMNS[columnNumber][cellIndexInContainer] = columnNumber;
             }
         }
-        for (int gridNumber = 0; gridNumber < 9; gridNumber++) {
-            ROW_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
-            COLUMN_NUMBERS_FOR_GRIDS[gridNumber] = new int[9];
+    }
+
+    private static void setupRows() {
+        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
+            ROW_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
+            COLUMN_NUMBERS_FOR_ROWS[rowNumber] = new int[9];
             for (int cellIndexInContainer = 0; cellIndexInContainer < 9; cellIndexInContainer++) {
-                ROW_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = GRID_STARTING_ROWS[gridNumber] + cellIndexInContainer / 3;
-                COLUMN_NUMBERS_FOR_GRIDS[gridNumber][cellIndexInContainer] = GRID_STARTING_COLUMNS[gridNumber] + cellIndexInContainer % 3;
+                ROW_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = rowNumber;
+                COLUMN_NUMBERS_FOR_ROWS[rowNumber][cellIndexInContainer] = cellIndexInContainer;
             }
         }
     }
@@ -212,49 +225,6 @@ class Board implements Cloneable {
         return singleValue;
     }
 
-    boolean hasConflicts() {
-        return rowsHaveConflicts() || columnsHaveConflicts() || gridsHaveConflicts();
-    }
-
-    private boolean rowsHaveConflicts() {
-        return containersHaveConflicts(ROW_NUMBERS_FOR_ROWS, COLUMN_NUMBERS_FOR_ROWS);
-    }
-
-    private boolean columnsHaveConflicts() {
-        return containersHaveConflicts(ROW_NUMBERS_FOR_COLUMNS, COLUMN_NUMBERS_FOR_COLUMNS);
-    }
-
-    private boolean gridsHaveConflicts() {
-        return containersHaveConflicts(ROW_NUMBERS_FOR_GRIDS, COLUMN_NUMBERS_FOR_GRIDS);
-    }
-
-    private boolean containersHaveConflicts(int[][] rowsForContainers, int[][] columnsForContainers) {
-        for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
-            if (containerHasConflict(containerIndex, rowsForContainers, columnsForContainers)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean containerHasConflict(int containerIndex, int[][] rowsForContainer, int[][] columnsForContainer) {
-        int[] rows = rowsForContainer[containerIndex];
-        int[] columns = columnsForContainer[containerIndex];
-        boolean[] seenDigit = new boolean[10];
-        for (int cellIndex = 0; cellIndex < 9; cellIndex++) {
-            int row = rows[cellIndex];
-            int column = columns[cellIndex];
-            int digit = board[row][column];
-            if (digit != 0) {
-                if (seenDigit[digit]) {
-                    return true;
-                }
-                seenDigit[digit] = true;
-            }
-        }
-        return false;
-    }
-
     private boolean digitsWithSinglePossibleLocationFound() {
         boolean solvedAny = false;
         for (int digit = 1; digit <= 9; digit++) {
@@ -302,6 +272,51 @@ class Board implements Cloneable {
         }
         return true;
     }
+
+    // consistency check
+    boolean hasConflicts() {
+        return rowsHaveConflicts() || columnsHaveConflicts() || gridsHaveConflicts();
+    }
+
+    private boolean rowsHaveConflicts() {
+        return containersHaveConflicts(ROW_NUMBERS_FOR_ROWS, COLUMN_NUMBERS_FOR_ROWS);
+    }
+
+    private boolean columnsHaveConflicts() {
+        return containersHaveConflicts(ROW_NUMBERS_FOR_COLUMNS, COLUMN_NUMBERS_FOR_COLUMNS);
+    }
+
+    private boolean gridsHaveConflicts() {
+        return containersHaveConflicts(ROW_NUMBERS_FOR_GRIDS, COLUMN_NUMBERS_FOR_GRIDS);
+    }
+
+    private boolean containersHaveConflicts(int[][] rowsForContainers, int[][] columnsForContainers) {
+        for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
+            if (containerHasConflict(containerIndex, rowsForContainers, columnsForContainers)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containerHasConflict(int containerIndex, int[][] rowsForContainer, int[][] columnsForContainer) {
+        int[] rows = rowsForContainer[containerIndex];
+        int[] columns = columnsForContainer[containerIndex];
+        boolean[] seenDigit = new boolean[10];
+        for (int cellIndex = 0; cellIndex < 9; cellIndex++) {
+            int row = rows[cellIndex];
+            int column = columns[cellIndex];
+            int digit = board[row][column];
+            if (digit != 0) {
+                if (seenDigit[digit]) {
+                    return true;
+                }
+                seenDigit[digit] = true;
+            }
+        }
+        return false;
+    }
+    // consistency check ends
 
     @Override
     public String toString() {
