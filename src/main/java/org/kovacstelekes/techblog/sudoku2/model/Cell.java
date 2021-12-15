@@ -12,7 +12,7 @@ import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 
 public class Cell {
-    private static final Collection<Integer> ALL_VALUES = IntStream.range(1, 10).boxed().collect(toList());
+    private static final Collection<Integer> ALL_VALUES = IntStream.range(1, 10).boxed().toList();
     private final String name;
     private final int ordinal;
     private final Set<Integer> values = new TreeSet<>(ALL_VALUES);

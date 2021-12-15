@@ -62,8 +62,7 @@ abstract class Container {
     private IterationOutcome findCellForValue(Integer value) {
         List<Cell> cellsThatCanHoldValue = cells.stream()
                 .filter(cell -> cell.values().contains(value))
-                .limit(2) // we want to know only if there is no suitable cell, there's a single cell or there are more
-                .collect(toList());
+                .limit(2).toList();
 
         Outcome outcome;
         boolean progressed = false;

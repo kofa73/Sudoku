@@ -317,10 +317,10 @@ class SolverTest {
                 cnt++;
             } while (System.currentTimeMillis() < end);
             long elapsed = System.currentTimeMillis() - start;
-            System.out.println(String.format(
-                    "%s\telapsed: %d ms; cnt=%d, perf=%f, sink=%d (ignore)",
+            System.out.printf(
+                    "%s\telapsed: %d ms; cnt=%d, perf=%f, sink=%d (ignore)%n",
                     solver.getClass().getName(), elapsed, cnt, elapsed / (double) cnt, sink
-            ));
+            );
         }
     }
 
