@@ -103,7 +103,7 @@ public class BackTrackSolverWithDeduction implements SudokuSolver {
             }
         }
 
-        int gridNumber = (row / 3) * 3 + column / 3;
+        int gridNumber = getGridNumber(row, column);
         int startRow = GRID_STARTING_ROWS[gridNumber];
         int startColumn = GRID_STARTING_COLUMNS[gridNumber];
         for (int searchRow = startRow; searchRow < startRow + 3; searchRow++) {
@@ -114,6 +114,10 @@ public class BackTrackSolverWithDeduction implements SudokuSolver {
             }
         }
         return takenValues;
+    }
+
+    private int getGridNumber(int row, int column) {
+        return (row / 3) * 3 + column / 3;
     }
 
     private boolean boardHasConflicts(int[][] board) {
