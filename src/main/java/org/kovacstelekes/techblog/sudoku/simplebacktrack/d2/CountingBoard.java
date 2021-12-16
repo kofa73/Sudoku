@@ -72,21 +72,21 @@ class CountingBoard implements Cloneable {
         }
         takenDigits = initialiseTakenDigits();
         populateTakenDigits();
-        assertThatTakenDigitsCountIsCorrect();
+//        assertThatTakenDigitsCountIsCorrect();
     }
 
     private CountingBoard(int[][] board, int[][][] takenDigits) {
         this.board = board;
         this.takenDigits = takenDigits;
-        assertThatTakenDigitsCountIsCorrect();
+//        assertThatTakenDigitsCountIsCorrect();
     }
 
     @Override
     public CountingBoard clone() {
-        if (!valid) {
-            throw new IllegalStateException();
-        }
-        assertThatTakenDigitsCountIsCorrect();
+//        if (!valid) {
+//            throw new IllegalStateException();
+//        }
+//        assertThatTakenDigitsCountIsCorrect();
         int[][] copyOfValues = new int[9][];
         int[][][] copyOfTakenDigits = new int[9][][];
         for (int row = 0; row < 9; row++) {
@@ -152,7 +152,7 @@ class CountingBoard implements Cloneable {
     }
 
     private void digitIsTakenForCellAt(int rowNumber, int columnNumber, int digit) {
-        assertThatTakenDigitsCountIsCorrect();
+//        assertThatTakenDigitsCountIsCorrect();
         if (digit != 0) {
             int[] takenDigitsOfCell = takenDigits[rowNumber][columnNumber];
             if (takenDigitsOfCell != NO_DIGITS_POSSIBLE && takenDigitsOfCell[digit] == 0) {
@@ -162,7 +162,7 @@ class CountingBoard implements Cloneable {
                     takenDigits[rowNumber][columnNumber] = NO_DIGITS_POSSIBLE;
                 }
             }
-            assertThatTakenDigitsCountIsCorrect();
+//            assertThatTakenDigitsCountIsCorrect();
         }
     }
 
@@ -193,7 +193,7 @@ class CountingBoard implements Cloneable {
             if (!sameCell) {
                 int digitInNeighbouringCell = board[searchRow][searchColumn];
                 digitIsTakenForCellAt(row, column, digitInNeighbouringCell);
-                assertThatTakenDigitsCountIsCorrect();
+//                assertThatTakenDigitsCountIsCorrect();
             }
         }
     }
@@ -203,17 +203,17 @@ class CountingBoard implements Cloneable {
     }
 
     public boolean canTake(int guessValue, int row, int column) {
-        assertThatTakenDigitsCountIsCorrect();
-        if (takenDigits[row][column] == null) {
-            return false;
-        }
+//        assertThatTakenDigitsCountIsCorrect();
+//        if (takenDigits[row][column] == null) {
+//            return false;
+//        }
         return takenDigits[row][column][guessValue] == 0;
     }
 
     public void setCell(int value, int row, int column) {
         board[row][column] = value;
         takenDigits[row][column] = NO_DIGITS_POSSIBLE;
-        assertThatTakenDigitsCountIsCorrect();
+//        assertThatTakenDigitsCountIsCorrect();
         updateTakenDigitsForNeighboursOfCellAt(row, column);
     }
 
@@ -222,9 +222,9 @@ class CountingBoard implements Cloneable {
     }
 
     private boolean solveCellsWithSinglePossibleValue() {
-        if (!valid) {
-            return false;
-        }
+//        if (!valid) {
+//            return false;
+//        }
         boolean progressed = false;
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
@@ -245,7 +245,7 @@ class CountingBoard implements Cloneable {
     }
 
     private int findSinglePossibleValue(int row, int column) {
-        assertThatTakenDigitsCountIsCorrect();
+//        assertThatTakenDigitsCountIsCorrect();
         int[] takenDigitsForCell = takenDigits[row][column];
         if (takenDigitsForCell == NO_DIGITS_POSSIBLE) {
             valid = false;
@@ -260,7 +260,7 @@ class CountingBoard implements Cloneable {
                 return possibleValue;
             }
         }
-        return 0;
+        throw new IllegalStateException("takenDigits was 8, but we didn't find any non-taken value");
     }
 
     private boolean digitsWithSinglePossibleLocationFound() {
@@ -285,7 +285,7 @@ class CountingBoard implements Cloneable {
                 int row = rows[cellIndex];
                 int column = columns[cellIndex];
                 if (unsolvedCellAt(row, column)) {
-                    assertThatTakenDigitsCountIsCorrect();
+//                    assertThatTakenDigitsCountIsCorrect();
                     int[] takenDigitsForCell = takenDigits[row][column];
                     if (takenDigitsForCell == NO_DIGITS_POSSIBLE) {
                         return false;
@@ -385,7 +385,7 @@ class CountingBoard implements Cloneable {
                 }
                 sb.append('[');
                 for (int digit = 1; digit <= 9; digit++) {
-                    assertThatTakenDigitsCountIsCorrect();
+//                    assertThatTakenDigitsCountIsCorrect();
                     if (takenDigits[row][column] == null) {
                         sb.append(digit);
                     } else {
@@ -399,7 +399,7 @@ class CountingBoard implements Cloneable {
         return sb.toString();
     }
 
-    void assertThatTakenDigitsCountIsCorrect() {
+//    void assertThatTakenDigitsCountIsCorrect() {
 //        for (int row = 0; row < 9; row++) {
 //            for (int column = 0; column < 9; column++) {
 //                int[] takenDigitsForCell = takenDigits[row][column];
@@ -416,5 +416,26 @@ class CountingBoard implements Cloneable {
 //                }
 //            }
 //        }
+//    }
+
+    int[] nextUnsolvedCell() {
+        int maxTaken = Integer.MIN_VALUE;
+        int[] cellWithFewestPossibilities = null;
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                int[] takenDigitsOfCell = takenDigits[row][column];
+                if (
+                        takenDigitsOfCell != NO_DIGITS_POSSIBLE
+                        && takenDigitsOfCell[0] > maxTaken
+                ) {
+                    maxTaken = takenDigitsOfCell[0];
+                    cellWithFewestPossibilities = new int[]{row, column};
+                }
+//                if (takenDigitsOfCell != null && takenDigitsOfCell[0] > 7) {
+//                    throw new IllegalStateException();
+//                }
+            }
+        }
+        return cellWithFewestPossibilities;
     }
 }

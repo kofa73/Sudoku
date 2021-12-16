@@ -13,24 +13,23 @@ public class BackTrackSolverWithMoreDeductionAndCountingBoard implements SudokuS
             return null;
         }
 
-        int[][] solution = solve(board, 0, 0);
+        int[][] solution = solve(board);
         return BoardUtils.toCellValues(solution);
     }
 
-    private int[][] solve(CountingBoard board, int rowStart, int columnStart) {
+    private int[][] solve(CountingBoard board) {
         board.deduceValues();
         if (!board.isValid()) {
             return null;
         }
-        for (int row = rowStart; row < 9; row++) {
-            for (int column = columnStart; column < 9; column++) {
-                if (board.unsolvedCellAt(row, column)) {
-                    return solveByGuessing(board, row, column);
-                }
-            }
-            // the next row has to be scanned from the 1st column
-            columnStart = 0;
+
+        int[] unsolvedCell = board.nextUnsolvedCell();
+        if (unsolvedCell != null) {
+            int row = unsolvedCell[0];
+            int column = unsolvedCell[1];
+            return solveByGuessing(board, row, column);
         }
+
         return board.board();
     }
 
@@ -39,7 +38,7 @@ public class BackTrackSolverWithMoreDeductionAndCountingBoard implements SudokuS
             if (board.canTake(guessValue, row, column)) {
                 CountingBoard backup = board.clone();
                 board.setCell(guessValue, row, column);
-                int[][] solution = solve(board, row, column + 1);
+                int[][] solution = solve(board);
                 if (solution != null) {
                     return solution;
                 } else {

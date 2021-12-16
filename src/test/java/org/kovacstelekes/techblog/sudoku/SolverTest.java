@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SolverTest {
     private int sink;
-    private final boolean measure = true;
+    private final boolean measure = false;
 
     @ParameterizedTest
     @MethodSource("solvers")
