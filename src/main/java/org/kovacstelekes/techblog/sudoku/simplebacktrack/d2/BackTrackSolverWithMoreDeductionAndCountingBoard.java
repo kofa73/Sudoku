@@ -19,7 +19,9 @@ public class BackTrackSolverWithMoreDeductionAndCountingBoard implements SudokuS
 
     private int[][] solve(CountingBoard board, int rowStart, int columnStart) {
         board.deduceValues();
-
+        if (!board.isValid()) {
+            return null;
+        }
         for (int row = rowStart; row < 9; row++) {
             for (int column = columnStart; column < 9; column++) {
                 if (board.unsolvedCellAt(row, column)) {

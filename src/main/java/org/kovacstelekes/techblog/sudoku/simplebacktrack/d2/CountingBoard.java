@@ -14,6 +14,8 @@ class CountingBoard implements Cloneable {
      */
     private final int[][][] takenDigits;
 
+    private boolean valid = true;
+
     private static final int[] NO_DIGITS_POSSIBLE = null;
 
     // grid top-left corner row and column for 3x3 grids
@@ -81,6 +83,9 @@ class CountingBoard implements Cloneable {
 
     @Override
     public CountingBoard clone() {
+        if (!valid) {
+            throw new IllegalStateException();
+        }
         assertThatTakenDigitsCountIsCorrect();
         int[][] copyOfValues = new int[9][];
         int[][][] copyOfTakenDigits = new int[9][][];
@@ -101,7 +106,7 @@ class CountingBoard implements Cloneable {
         do {
             updated = solveCellsWithSinglePossibleValue()
                     || digitsWithSinglePossibleLocationFound();
-        } while (updated);
+        } while (updated && valid);
     }
 
     private int[][][] initialiseTakenDigits() {
@@ -217,11 +222,17 @@ class CountingBoard implements Cloneable {
     }
 
     private boolean solveCellsWithSinglePossibleValue() {
+        if (!valid) {
+            return false;
+        }
         boolean progressed = false;
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 if (unsolvedCellAt(row, column)) {
                     int singleValue = findSinglePossibleValue(row, column);
+                    if (!valid) {
+                        return false;
+                    }
 
                     if (singleValue > 0) {
                         setCell(singleValue, row, column);
@@ -237,6 +248,7 @@ class CountingBoard implements Cloneable {
         assertThatTakenDigitsCountIsCorrect();
         int[] takenDigitsForCell = takenDigits[row][column];
         if (takenDigitsForCell == NO_DIGITS_POSSIBLE) {
+            valid = false;
             return 0;
         }
         if (takenDigitsForCell[0] != 8) {
@@ -252,6 +264,9 @@ class CountingBoard implements Cloneable {
     }
 
     private boolean digitsWithSinglePossibleLocationFound() {
+        if (!valid) {
+            return false;
+        }
         boolean solvedAny = false;
         for (int digit = 1; digit <= 9; digit++) {
             for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
@@ -301,6 +316,10 @@ class CountingBoard implements Cloneable {
             }
         }
         return true;
+    }
+
+    boolean isValid() {
+        return valid;
     }
 
     // consistency check
